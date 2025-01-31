@@ -3,150 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ثبت‌نام</title>
-    <style>
-        /* استایل‌های ساده برای فرم */
-        body {
-            font-family: Arial, sans-serif;
-            direction: rtl;
-            text-align: right;
-            background-color: #f4f4f4;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        input[type="text"], input[type="date"], input[type="file"], select {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        input[type="radio"] {
-            margin: 0 5px;
-        }
-        .btn {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background-color: #45a049;
-        }
-        .img-preview {
-            max-width: 100px;
-            max-height: 100px;
-            border-radius: 50%;
-            margin-top: 10px;
-        }
-        .signup-success {
-            color: green;
-            font-weight: bold;
-        }
-    </style>
+    <title>فرم ثبت نام</title>
 </head>
 <body>
+    <h1>فرم ثبت نام</h1>
+    <form id="signupForm">
+        <label for="name">نام:</label>
+        <input type="text" id="name" name="name" required><br><br>
 
-    <div class="container">
-        <h2>فرم ثبت‌نام</h2>
-        <form id="signupForm">
-            <label for="name">نام:</label>
-            <input type="text" id="name" required>
+        <label for="email">ایمیل:</label>
+        <input type="email" id="email" name="email" required><br><br>
 
-            <label for="family">نام خانوادگی:</label>
-            <input type="text" id="family" required>
-
-            <label for="nationalCode">کد ملی:</label>
-            <input type="text" id="nationalCode" required>
-
-            <label for="birthdate">تاریخ تولد:</label>
-            <input type="date" id="birthdate" required>
-
-            <label>جنسیت:</label>
-            <input type="radio" id="male" name="gender" value="مرد">
-            <label for="male">مرد</label>
-            <input type="radio" id="female" name="gender" value="زن">
-            <label for="female">زن</label>
-
-            <label for="education">تحصیلات:</label>
-            <input type="text" id="education" required>
-
-            <label for="address">آدرس:</label>
-            <input type="text" id="address" required>
-
-            <label for="profileImage">عکس پروفایل:</label>
-            <input type="file" id="profileImage" accept="image/*" onchange="previewImage(event)" required>
-            <img id="profilePreview" class="img-preview" alt="پیش‌نمایش تصویر" />
-
-            <button type="submit" class="btn">ثبت‌نام</button>
-        </form>
-
-        <p id="signupSuccess" class="signup-success"></p>
-    </div>
+        <button type="submit">ثبت نام</button>
+    </form>
 
     <script>
-        // پیش‌نمایش تصویر پروفایل
-        function previewImage(event) {
-            const file = event.target.files[0];
-            const reader = new FileReader();
-            reader.onload = function() {
-                const output = document.getElementById('profilePreview');
-                output.src = reader.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // ذخیره‌سازی اطلاعات در LocalStorage
-        function saveUser(user) {
-            localStorage.setItem('user', JSON.stringify(user));
-        }
-
-        // ارسال اطلاعات به ربات تلگرام
-        function sendToTelegram(message) {
-            const token = "7546571600:AAHU8BKI4svtt5icjOFZJbKVMt_232n1s7Q";
-            const chatId = " -4755536198";
-            const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => console.log("Message sent", data))
-                .catch(error => console.error("Error sending message", error));
-        }
-
-        // ثبت‌نام
+        // زمانی که فرم ثبت نام ارسال می‌شود
         document.getElementById('signupForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+            event.preventDefault();  // جلوگیری از ارسال فرم به صورت پیش‌فرض
 
-            const user = {
-                name: document.getElementById("name").value.trim(),
-                family: document.getElementById("family").value.trim(),
-                nationalCode: document.getElementById("nationalCode").value.trim(),
-                birthdate: document.getElementById("birthdate").value.trim(),
-                gender: document.querySelector('input[name="gender"]:checked')?.value || '',
-                education: document.getElementById("education").value.trim(),
-                address: document.getElementById("address").value.trim(),
-                profileImage: document.getElementById("profilePreview").src
-            };
+            // دریافت اطلاعات فرم
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
 
-            saveUser(user);
+            // توکن ربات تلگرام و آیدی چت
+            const botToken = '7546571600:AAHU8BKI4svtt5icjOFZJbKVMt_232n1s7Q';
+            const chatId = '-4755536198';
 
-            // ارسال اطلاعات به تلگرام
-            const message = `ثبت‌نام جدید: \nنام: ${user.name}\nنام خانوادگی: ${user.family}\nکد ملی: ${user.nationalCode}\nتاریخ تولد: ${user.birthdate}\nجنسیت: ${user.gender}\nتحصیلات: ${user.education}\nآدرس: ${user.address}`;
-            sendToTelegram(message);
+            // ساخت پیام برای ارسال به تلگرام
+            const message = `ثبت نام جدید:\nنام: ${name}\nایمیل: ${email}`;
 
-            document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
-            setTimeout(() => window.location.href = 'login.html', 2000); // هدایت به صفحه ورود
+            // ارسال درخواست به API تلگرام
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`, {
+                method: 'GET',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    alert('اطلاعات با موفقیت ارسال شد!');
+                } else {
+                    alert('خطا در ارسال اطلاعات');
+                }
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+                alert('خطا در ارسال اطلاعات');
+            });
         });
     </script>
-
 </body>
 </html>
