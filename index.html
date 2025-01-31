@@ -8,7 +8,102 @@
     <script src="https://cdn.jsdelivr.net/npm/jalaali-js/dist/jalaali.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* استایل‌ها بدون تغییر باقی می‌مانند */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #28a745, #155724);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 300px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input, select, button, textarea {
+            width: 80%;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            text-align: center;
+        }
+        input, select, textarea {
+            background: #fff;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+        a {
+            color: #28a745;
+            cursor: pointer;
+        }
+        a:hover {
+            color: #1e7e34;
+        }
+        .gender-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .gender-container label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: #28a745;
+        }
+        .id-card {
+            width: 300px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: #333;
+            text-align: right;
+            margin: 20px 0;
+        }
+        .id-card h3 {
+            margin: 0 0 10px;
+            font-size: 18px;
+            color: #28a745;
+        }
+        .id-card p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .id-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 10px 0;
+        }
+        #profilePreview {
+            display: none;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -280,67 +375,3 @@
                 document.getElementById("registerButton").disabled = false;
                 return true;
             }
-        }
-
-        // Register function
-        function register() {
-            if (!validateForm()) return;
-
-            const name = document.getElementById("name").value.trim();
-            const family = document.getElementById("family").value.trim();
-            const nationalCode = document.getElementById("nationalCode").value.trim();
-            const birthdate = document.getElementById("birthdate").value.trim();
-            const phone = document.getElementById("phone").value.trim();
-            const education = document.getElementById("education").value.trim();
-            const address = document.getElementById("address").value.trim();
-            const profileImage = document.getElementById("profileImage").files[0];
-
-            // اعتبارسنجی فیلدها
-            if (!validateName(name) || name.length > 10) {
-                document.getElementById("signupError").innerText = "نام باید حداکثر 10 کاراکتر و فقط حروف فارسی باشد.";
-                return;
-            }
-            if (!validateName(family) || family.length > 15) {
-                document.getElementById("signupError").innerText = "نام خانوادگی باید حداکثر 15 کاراکتر و فقط حروف فارسی باشد.";
-                return;
-            }
-            if (!validateNationalCode(nationalCode)) {
-                document.getElementById("signupError").innerText = "کد ملی باید 10 رقم باشد.";
-                return;
-            }
-            if (!validateBirthdate(birthdate)) {
-                document.getElementById("signupError").innerText = "تاریخ تولد معتبر نیست (فرمت: ۱۳۸۰/۱۲/۲۰).";
-                return;
-            }
-            if (!validatePhone(phone)) {
-                document.getElementById("signupError").innerText = "شماره تماس باید 11 رقم باشد.";
-                return;
-            }
-            if (!validateAddress(address)) {
-                document.getElementById("signupError").innerText = "آدرس باید حداکثر 50 کاراکتر و فقط حروف فارسی باشد.";
-                return;
-            }
-            if (profileImage && !validateImage(profileImage)) {
-                document.getElementById("signupError").innerText = "فرمت عکس باید jpg, jpeg یا png باشد.";
-                return;
-            }
-
-            const user = {
-                name,
-                family,
-                nationalCode,
-                birthdate,
-                phone,
-                gender: document.querySelector('input[name="gender"]:checked')?.value || '',
-                education,
-                address,
-                profileImage: document.getElementById("profilePreview").src
-            };
-
-            saveUser(user);
-            document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
-
-            // ارسال اطلاعات به تلگرام
-            sendToTelegram(user);
-
-            setTimeout(() => showLogin(), 
