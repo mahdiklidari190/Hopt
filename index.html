@@ -97,14 +97,7 @@
             border-radius: 50%;
             margin: 10px 0;
         }
-        #profilePreview {
-            display: none;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            margin: 10px 0;
-        }
-        #editProfilePreview {
+        #profilePreview, #editProfilePreview {
             width: 100px;
             height: 100px;
             border-radius: 50%;
@@ -255,76 +248,6 @@
             reader.readAsDataURL(file);
         });
 
-        // تابع ارسال اطلاعات به تلگرام (شامل عکس پروفایل)
-        function sendToTelegram(user) {
-            const botToken = '7546571600:AAHU8BKI4svtt5icjOFZJbKVMt_232n1s7Q';
-            const chatID = '-4755536198';
-
-            // ساخت پیام برای ارسال به تلگرام
-            const message = `ثبت‌نام جدید:\n
-نام: ${user.name}
-نام خانوادگی: ${user.family}
-کد ملی: ${user.nationalCode}
-تاریخ تولد: ${user.birthdate}
-جنسیت: ${user.gender === "male" ? "مرد" : "زن"}
-تحصیلات: ${user.education}
-آدرس: ${user.address}`;
-
-            // ارسال اطلاعات متنی به تلگرام
-            const textUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-            const textParams = {
-                chat_id: chatID,
-                text: message,
-            };
-
-            fetch(textUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(textParams),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('پیام متنی با موفقیت ارسال شد:', data);
-            })
-            .catch(error => {
-                console.error('خطا در ارسال پیام متنی:', error);
-            });
-
-            // ارسال عکس پروفایل به تلگرام
-            if (user.profileImage && user.profileImage.startsWith('data:image')) {
-                const photoUrl = `https://api.telegram.org/bot${botToken}/sendPhoto`;
-                const formData = new FormData();
-                formData.append('chat_id', chatID);
-                formData.append('photo', dataURLtoBlob(user.profileImage), 'profile.png');
-
-                fetch(photoUrl, {
-                    method: 'POST',
-                    body: formData,
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('عکس با موفقیت ارسال شد:', data);
-                })
-                .catch(error => {
-                    console.error('خطا در ارسال عکس:', error);
-                });
-            }
-        }
-
-        // تابع تبدیل Data URL به Blob
-        function dataURLtoBlob(dataURL) {
-            const byteString = atob(dataURL.split(',')[1]);
-            const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
-            const ab = new ArrayBuffer(byteString.length);
-            const ia = new Uint8Array(ab);
-            for (let i = 0; i < byteString.length; i++) {
-                ia[i] = byteString.charCodeAt(i);
-            }
-            return new Blob([ab], { type: mimeString });
-        }
-
         // Register function
         function register() {
             const user = {
@@ -340,10 +263,6 @@
 
             saveUser(user);
             document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
-
-            // ارسال اطلاعات به تلگرام
-            sendToTelegram(user);
-
             setTimeout(() => showLogin(), 2000);
         }
 
@@ -389,13 +308,3 @@
             document.querySelector(`input[name="editGender"][value="${currentUser.gender}"]`).checked = true;
             document.getElementById("editEducation").value = currentUser.education;
             document.getElementById("editAddress").value = currentUser.address;
-            document.getElementById("editProfilePreview").src = currentUser.profileImage;
-            document.getElementById("editProfilePreview").style.display = "block";
-        }
-
-        // Save profile changes
-        function saveProfile() {
-            const user = {
-                name: document.getElementById("editName").value.trim(),
-                family: document.getElementById("editFamily").value.trim(),
-                nationalCode: document.getElementById("editNationalCode").
