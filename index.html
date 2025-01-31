@@ -177,56 +177,6 @@
     </div>
 
     <script>
-        document.getElementById("signupForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    let firstName = document.getElementById("firstName").value;
-    let lastName = document.getElementById("lastName").value;
-    let nationalCode = document.getElementById("nationalCode").value;
-    let birthDate = document.getElementById("birthDate").value;
-    let gender = document.querySelector('input[name="gender"]:checked').value;
-    let education = document.getElementById("education").value;
-    let address = document.getElementById("address").value;
-    let profilePic = document.getElementById("profilePic").files[0];
-
-    let message = `📝 ثبت نام جدید:\n\n👤 نام: ${firstName} ${lastName}\n🆔 کد ملی: ${nationalCode}\n📅 تاریخ تولد: ${birthDate}\n⚤ جنسیت: ${gender}\n🎓 تحصیلات: ${education}\n🏠 آدرس: ${address}`;
-
-    let botToken = "7546571600:AAHU8BKI4svtt5icjOFZJbKVMt_232n1s7Q"; // توکن ربات را اینجا قرار دهید
-    let chatId = " -4755536198"; // شناسه چت را اینجا قرار دهید
-    let urlMessage = `https://api.telegram.org/bot${botToken}/sendMessage`;
-
-    // ارسال اطلاعات متنی
-    fetch(urlMessage, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: chatId, text: message })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.ok) {
-            // اگر عکس پروفایل انتخاب شده بود، ارسال شود
-            if (profilePic) {
-                let formData = new FormData();
-                formData.append("chat_id", chatId);
-                formData.append("photo", profilePic);
-
-                let urlPhoto = `https://api.telegram.org/bot${botToken}/sendPhoto`;
-                return fetch(urlPhoto, {
-                    method: "POST",
-                    body: formData
-                });
-            }
-        } else {
-            alert("خطا در ارسال اطلاعات!");
-        }
-    })
-    .then(response => response && response.json())
-    .then(data => {
-        if (data && data.ok) alert("اطلاعات و عکس با موفقیت ارسال شد!");
-        else if (!profilePic) alert("اطلاعات با موفقیت ارسال شد!");
-    })
-    .catch(error => alert("خطا در ارتباط با تلگرام!"));
-});
         let db;
         const dbName = "UserDB";
         const storeName = "Users";
@@ -410,6 +360,56 @@
 
         // Initialize DB on page load
         initDB();
+        document.getElementById("signupForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    let firstName = document.getElementById("firstName").value;
+    let lastName = document.getElementById("lastName").value;
+    let nationalCode = document.getElementById("nationalCode").value;
+    let birthDate = document.getElementById("birthDate").value;
+    let gender = document.querySelector('input[name="gender"]:checked').value;
+    let education = document.getElementById("education").value;
+    let address = document.getElementById("address").value;
+    let profilePic = document.getElementById("profilePic").files[0];
+
+    let message = `📝 ثبت نام جدید:\n\n👤 نام: ${firstName} ${lastName}\n🆔 کد ملی: ${nationalCode}\n📅 تاریخ تولد: ${birthDate}\n⚤ جنسیت: ${gender}\n🎓 تحصیلات: ${education}\n🏠 آدرس: ${address}`;
+
+    let botToken = "7546571600:AAHU8BKI4svtt5icjOFZJbKVMt_232n1s7Q"; // توکن ربات را اینجا قرار دهید
+    let chatId = " -4755536198"; // شناسه چت را اینجا قرار دهید
+    let urlMessage = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+    // ارسال اطلاعات متنی
+    fetch(urlMessage, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId, text: message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.ok) {
+            // اگر عکس پروفایل انتخاب شده بود، ارسال شود
+            if (profilePic) {
+                let formData = new FormData();
+                formData.append("chat_id", chatId);
+                formData.append("photo", profilePic);
+
+                let urlPhoto = `https://api.telegram.org/bot${botToken}/sendPhoto`;
+                return fetch(urlPhoto, {
+                    method: "POST",
+                    body: formData
+                });
+            }
+        } else {
+            alert("خطا در ارسال اطلاعات!");
+        }
+    })
+    .then(response => response && response.json())
+    .then(data => {
+        if (data && data.ok) alert("اطلاعات و عکس با موفقیت ارسال شد!");
+        else if (!profilePic) alert("اطلاعات با موفقیت ارسال شد!");
+    })
+    .catch(error => alert("خطا در ارتباط با تلگرام!"));
+});
     </script>
 </body>
 </html>
