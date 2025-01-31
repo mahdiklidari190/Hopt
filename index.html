@@ -109,7 +109,7 @@
 <body>
     <div class="container">
         <div id="signup">
-            <h2>ت‌نام</h2>
+            <h2>ثبت‌نام</h2>
             <input type="text" id="name" placeholder="نام">
             <input type="text" id="family" placeholder="نام خانوادگی">
             <input type="text" id="nationalCode" placeholder="کد ملی">
@@ -177,203 +177,96 @@
     </div>
 
     <script>
-        let db;
         const dbName = "UserDB";
         const storeName = "Users";
+        let db;
         let currentUser = null;
 
         // Initialize IndexedDB
-        function initDB() {
-            const request = indexedDB.open(dbName, 1);
-            request.onupgradeneeded = function (event) {
-                db = event.target.result;
-                if (!db.objectStoreNames.contains(storeName)) {
-                    db.createObjectStore(storeName, { keyPath: "nationalCode" });
-                }
-            };
-            request.onsuccess = function (event) {
-                db = event.target.result;
-            };
-            request.onerror = function (event) {
-                console.error("Error opening DB:", event.target.error);
-            };
-        }
+        const initDB = () => {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(dbName, 1);
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    if (!db.objectStoreNames.contains(storeName)) {
+                        db.createObjectStore(storeName, { keyPath: "nationalCode" });
+                    }
+                };
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    resolve(db);
+                };
+                request.onerror = (event) => {
+                    reject(`Error opening DB: ${event.target.error}`);
+                };
+            });
+        };
 
         // Save user to IndexedDB
-        async function saveUser(user) {
-            const transaction = db.transaction([storeName], "readwrite");
-            const store = transaction.objectStore(storeName);
-            const request = store.put(user);
+        const saveUser = (user) => {
             return new Promise((resolve, reject) => {
-                request.onsuccess = () => resolve();
-                request.onerror = (event) => reject(event.target.error);
+                const transaction = db.transaction([storeName], "readwrite");
+                const store = transaction.objectStore(storeName);
+                const request = store.put(user);
+                request.onsuccess = () => resolve("User saved successfully.");
+                request.onerror = (event) => reject(`Error saving user: ${event.target.error}`);
             });
-        }
+        };
 
         // Get user from IndexedDB
-        async function getUser(nationalCode) {
-            const transaction = db.transaction([storeName], "readonly");
-            const store = transaction.objectStore(storeName);
-            const request = store.get(nationalCode);
+        const getUser = (nationalCode) => {
             return new Promise((resolve, reject) => {
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = (event) => reject(event.target.error);
+                const transaction = db.transaction([storeName], "readonly");
+                const store = transaction.objectStore(storeName);
+                const request = store.get(nationalCode);
+                request.onsuccess = (event) => resolve(event.target.result);
+                request.onerror = (event) => reject(`Error fetching user: ${event.target.error}`);
             });
-        }
+        };
 
         // Preview profile image
-        document.getElementById("profileImage").addEventListener("change", function (e) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById("profilePreview").src = e.target.result;
-                document.getElementById("profilePreview").style.display = "block";
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // Preview edit profile image
-        document.getElementById("editProfileImage").addEventListener("change", function (e) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById("editProfilePreview").src = e.target.result;
-                document.getElementById("editProfilePreview").style.display = "block";
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // اعتبارسنجی کد ملی و تاریخ تولد
-        function validateNationalCode(nationalCode) {
-            if (!/^\d{10}$/.test(nationalCode)) {
-                return "کد ملی باید ۱۰ رقم باشد.";
-            }
-            return null;
-        }
-
-        function validateBirthdate(birthdate) {
-            if (!/^\d{4}\/\d{2}\/\d{2}$/.test(birthdate)) {
-                return "تاریخ تولد باید به فرمت ۱۳۸۰/۰۵/۲۳ باشد.";
-            }
-            return null;
-        }
-
-        // ارسال اطلاعات به تلگرام
-        async function sendToTelegram(user) {
-            const botToken = '7546571600:AAHU8BKI4svtt5icjOFZJbKVMt_232n1s7Q';
-            const chatID = '-4755536198';
-
-            const message = `ثبت‌نام جدید:
-نام: ${user.name}
-نام خانوادگی: ${user.family}
-کد ملی: ${user.nationalCode}
-تاریخ تولد: ${user.birthdate}
-جنسیت: ${user.gender === "male" ? "مرد" : "زن"}
-تحصیلات: ${user.education}
-آدرس: ${user.address}`;
-
-            // ارسال پیام متنی
-            await sendTextMessage(botToken, chatID, message);
-
-            // ارسال عکس پروفایل
-            if (user.profileImage && user.profileImage.startsWith('data:image')) {
-                await sendPhoto(botToken, chatID, user.profileImage);
-            }
-        }
-
-        // ارسال پیام متنی به تلگرام
-        async function sendTextMessage(botToken, chatID, message) {
-            const textUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-            const textParams = {
-                chat_id: chatID,
-                text: message,
-            };
-
-            try {
-                const response = await fetch(textUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(textParams),
-                });
-                const data = await response.json();
-                console.log('پیام متنی با موفقیت ارسال شد:', data);
-            } catch (error) {
-                console.error('خطا در ارسال پیام متنی:', error);
-            }
-        }
-
-        // ارسال عکس به تلگرام
-        async function sendPhoto(botToken, chatID, photoDataURL) {
-            const photoUrl = `https://api.telegram.org/bot${botToken}/sendPhoto`;
-            const formData = new FormData();
-            formData.append('chat_id', chatID);
-            formData.append('photo', dataURLtoBlob(photoDataURL), 'profile.png');
-
-            try {
-                const response = await fetch(photoUrl, {
-                    method: 'POST',
-                    body: formData,
-                });
-                const data = await response.json();
-                console.log('عکس با موفقیت ارسال شد:', data);
-            } catch (error) {
-                console.error('خطا در ارسال عکس:', error);
-            }
-        }
-
-        // تبدیل Data URL به Blob
-        function dataURLtoBlob(dataURL) {
-            const byteString = atob(dataURL.split(',')[1]);
-            const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
-            const ab = new ArrayBuffer(byteString.length);
-            const ia = new Uint8Array(ab);
-            for (let i = 0; i < byteString.length; i++) {
-                ia[i] = byteString.charCodeAt(i);
-            }
-            return new Blob([ab], { type: mimeString });
-        }
+        const previewImage = (inputId, previewId) => {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            input.addEventListener("change", (e) => {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith("image/")) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        preview.src = e.target.result;
+                        preview.style.display = "block";
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    alert("لطفاً یک فایل تصویری انتخاب کنید.");
+                }
+            });
+        };
 
         // Register function
-        async function register() {
-            const name = document.getElementById("name").value.trim();
-            const family = document.getElementById("family").value.trim();
-            const nationalCode = document.getElementById("nationalCode").value.trim();
-            const birthdate = document.getElementById("birthdate").value.trim();
-            const gender = document.querySelector('input[name="gender"]:checked')?.value || '';
-            const education = document.getElementById("education").value.trim();
-            const address = document.getElementById("address").value.trim();
-            const profileImage = document.getElementById("profilePreview").src;
-
-            // اعتبارسنجی
-            const nationalCodeError = validateNationalCode(nationalCode);
-            const birthdateError = validateBirthdate(birthdate);
-
-            if (nationalCodeError) {
-                document.getElementById("signupError").innerText = nationalCodeError;
-                return;
-            }
-            if (birthdateError) {
-                document.getElementById("signupError").innerText = birthdateError;
-                return;
-            }
-
-            const user = { name, family, nationalCode, birthdate, gender, education, address, profileImage };
+        const register = async () => {
+            const user = {
+                name: document.getElementById("name").value.trim(),
+                family: document.getElementById("family").value.trim(),
+                nationalCode: document.getElementById("nationalCode").value.trim(),
+                birthdate: document.getElementById("birthdate").value.trim(),
+                gender: document.querySelector('input[name="gender"]:checked')?.value || '',
+                education: document.getElementById("education").value.trim(),
+                address: document.getElementById("address").value.trim(),
+                profileImage: document.getElementById("profilePreview").src
+            };
 
             try {
                 await saveUser(user);
                 document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
-                await sendToTelegram(user);
                 setTimeout(() => showLogin(), 2000);
             } catch (error) {
-                console.error("Error during registration:", error);
-                document.getElementById("signupError").innerText = "خطا در ثبت‌نام!";
+                document.getElementById("signupError").innerText = error;
             }
-        }
+        };
 
         // Login function
-        async function login() {
+        const login = async () => {
             const nationalCode = document.getElementById("loginNationalCode").value.trim();
             try {
                 const user = await getUser(nationalCode);
@@ -384,13 +277,12 @@
                     document.getElementById("loginError").innerText = "کاربر یافت نشد!";
                 }
             } catch (error) {
-                console.error("Error fetching user:", error);
-                document.getElementById("loginError").innerText = "خطا در ورود!";
+                document.getElementById("loginError").innerText = error;
             }
-        }
+        };
 
         // Show dashboard
-        function showDashboard(user) {
+        const showDashboard = (user) => {
             document.getElementById("signup").style.display = "none";
             document.getElementById("login").style.display = "none";
             document.getElementById("editProfile").style.display = "none";
@@ -404,23 +296,12 @@
             document.getElementById("userEducation").innerText = user.education;
             document.getElementById("userAddress").innerText = user.address;
             document.getElementById("userProfileImage").src = user.profileImage;
-        }
+        };
 
-        // Edit profile
-        function editProfile() {
-            document.getElementById("dashboard").style.display = "none";
-            document.getElementById("editProfile").style.display = "block";
-
-            document.getElementById("editName").value = currentUser.name;
-            document.getElementById("editFamily").value = currentUser.family;
-            document.getElementById("editNationalCode").value = currentUser.nationalCode;
-            document.getElementById("editBirthdate").value = currentUser.birthdate;
-            document.querySelector(`input[name="editGender"][value="${currentUser.gender}"]`).checked = true;
-            document.getElementById("editEducation").value = currentUser.education;
-            document.getElementById("editAddress").value = currentUser.address;
-            document.getElementById("editProfilePreview").src = currentUser.profileImage;
-            document.getElementById("editProfilePreview").style.display = "block";
-        }
-
-        // Save profile changes
-        async function saveProfile() {
+        // Initialize DB and image previews
+        initDB().catch(console.error);
+        previewImage("profileImage", "profilePreview");
+        previewImage("editProfileImage", "editProfilePreview");
+    </script>
+</body>
+</html>
