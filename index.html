@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/jalaali-js/dist/jalaali.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
+        /* استایل‌ها بدون تغییر باقی می‌مانند */
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(to right, #28a745, #155724);
@@ -247,6 +248,21 @@
             reader.readAsDataURL(file);
         });
 
+        // Validate user input
+        function validateUser(user) {
+            if (!user.name || !user.family || !user.nationalCode || !user.birthdate || !user.gender || !user.education || !user.address) {
+                document.getElementById("signupError").innerText = "لطفا تمام فیلدها را پر کنید.";
+                return false;
+            }
+
+            if (user.nationalCode.length !== 10) {
+                document.getElementById("signupError").innerText = "کد ملی باید ۱۰ رقم باشد.";
+                return false;
+            }
+
+            return true;
+        }
+
         // Register function
         function register() {
             const user = {
@@ -259,6 +275,10 @@
                 address: document.getElementById("address").value.trim(),
                 profileImage: document.getElementById("profilePreview").src
             };
+
+            if (!validateUser(user)) {
+                return;
+            }
 
             saveUser(user);
             document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
@@ -323,6 +343,10 @@
                 address: document.getElementById("editAddress").value.trim(),
                 profileImage: document.getElementById("editProfilePreview").src
             };
+
+            if (!validateUser(user)) {
+                return;
+            }
 
             saveUser(user);
             currentUser = user;
