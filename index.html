@@ -130,6 +130,8 @@
         </div>
         <div id="login" style="display: none;">
             <h2>ورود</h2>
+            <input type="text" id="loginName" placeholder="نام">
+            <input type="text" id="loginFamily" placeholder="نام خانوادگی">
             <input type="text" id="loginNationalCode" placeholder="کد ملی">
             <p class="error" id="loginError"></p>
             <button onclick="login()">ورود</button>
@@ -166,6 +168,8 @@
             </div>
             <input type="text" id="editEducation" placeholder="تحصیلات">
             <textarea id="editAddress" placeholder="آدرس محل زندگی"></textarea>
+            <input type="file" id="editProfileImage" accept="image/*">
+            <img id="editProfilePreview" src="#" alt="پیش‌نمایش عکس">
             <p class="error" id="editError"></p>
             <p class="success" id="editSuccess"></p>
             <button onclick="saveProfile()">ذخیره تغییرات</button>
@@ -278,7 +282,7 @@
 
             saveUser(user);
             document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
-            setTimeout(() => showLogin(), 1000);
+            setTimeout(() => showLogin(), 2000);
         }
 
         // Login function
@@ -300,6 +304,7 @@
             document.getElementById("login").style.display = "none";
             document.getElementById("editProfile").style.display = "none";
             document.getElementById("dashboard").style.display = "block";
+
             document.getElementById("userName").innerText = user.name;
             document.getElementById("userFamily").innerText = user.family;
             document.getElementById("userNationalCode").innerText = user.nationalCode;
@@ -314,6 +319,7 @@
         function editProfile() {
             document.getElementById("dashboard").style.display = "none";
             document.getElementById("editProfile").style.display = "block";
+
             document.getElementById("editName").value = currentUser.name;
             document.getElementById("editFamily").value = currentUser.family;
             document.getElementById("editNationalCode").value = currentUser.nationalCode;
