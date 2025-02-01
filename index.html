@@ -250,8 +250,20 @@
 
         // Validate user input
         function validateUser(user) {
+            const nameRegex = /^[\u0600-\u06FF\sA-Za-z]+$/; // حروف فارسی و لاتین
+
             if (!user.name || !user.family || !user.nationalCode || !user.birthdate || !user.gender || !user.education || !user.address) {
                 document.getElementById("signupError").innerText = "لطفا تمام فیلدها را پر کنید.";
+                return false;
+            }
+
+            if (!nameRegex.test(user.name)) {
+                document.getElementById("signupError").innerText = "نام فقط می‌تواند شامل حروف فارسی یا لاتین باشد.";
+                return false;
+            }
+
+            if (!nameRegex.test(user.family)) {
+                document.getElementById("signupError").innerText = "نام خانوادگی فقط می‌تواند شامل حروف فارسی یا لاتین باشد.";
                 return false;
             }
 
@@ -350,40 +362,3 @@
 
             saveUser(user);
             currentUser = user;
-            showDashboard(user);
-        }
-
-        // Logout
-        function logout() {
-            currentUser = null;
-            document.getElementById("dashboard").style.display = "none";
-            document.getElementById("signup").style.display = "block";
-        }
-
-        // Show login
-        function showLogin() {
-            document.getElementById("signup").style.display = "none";
-            document.getElementById("login").style.display = "block";
-        }
-
-        // Show signup
-        function showSignup() {
-            document.getElementById("login").style.display = "none";
-            document.getElementById("signup").style.display = "block";
-        }
-
-        // Download ID card
-        function downloadIDCard() {
-            html2canvas(document.getElementById("idCard")).then(canvas => {
-                const link = document.createElement("a");
-                link.download = "کارت شناسایی.png";
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-            });
-        }
-
-        // Initialize DB on page load
-        initDB();
-    </script>
-</body>
-</html>
