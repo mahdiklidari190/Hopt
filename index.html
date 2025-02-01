@@ -250,25 +250,32 @@
 
         // Validate user input
         function validateUser(user) {
-            const nameRegex = /^[\u0600-\u06FF\sA-Za-z]+$/; // حروف فارسی و لاتین
-
             if (!user.name || !user.family || !user.nationalCode || !user.birthdate || !user.gender || !user.education || !user.address) {
                 document.getElementById("signupError").innerText = "لطفا تمام فیلدها را پر کنید.";
                 return false;
             }
 
-            if (!nameRegex.test(user.name)) {
-                document.getElementById("signupError").innerText = "نام فقط می‌تواند شامل حروف فارسی یا لاتین باشد.";
-                return false;
-            }
-
-            if (!nameRegex.test(user.family)) {
-                document.getElementById("signupError").innerText = "نام خانوادگی فقط می‌تواند شامل حروف فارسی یا لاتین باشد.";
-                return false;
-            }
-
             if (user.nationalCode.length !== 10) {
                 document.getElementById("signupError").innerText = "کد ملی باید ۱۰ رقم باشد.";
+                return false;
+            }
+
+            return true;
+        }
+
+        // Validate login input
+        function validateLogin() {
+            const name = document.getElementById("loginName").value.trim();
+            const family = document.getElementById("loginFamily").value.trim();
+            const nationalCode = document.getElementById("loginNationalCode").value.trim();
+
+            if (!name || !family || !nationalCode) {
+                document.getElementById("loginError").innerText = "لطفا تمام فیلدها را پر کنید.";
+                return false;
+            }
+
+            if (nationalCode.length !== 10) {
+                document.getElementById("loginError").innerText = "کد ملی باید ۱۰ رقم باشد.";
                 return false;
             }
 
@@ -299,6 +306,10 @@
 
         // Login function
         function login() {
+            if (!validateLogin()) {
+                return;
+            }
+
             const nationalCode = document.getElementById("loginNationalCode").value.trim();
             getUser(nationalCode, function (user) {
                 if (user) {
@@ -356,9 +367,4 @@
                 profileImage: document.getElementById("editProfilePreview").src
             };
 
-            if (!validateUser(user)) {
-                return;
-            }
-
-            saveUser(user);
-            currentUser = user;
+            if (!
