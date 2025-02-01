@@ -149,11 +149,30 @@
                 <p><strong>تحصیلات:</strong> <span id="userEducation"></span></p>
                 <p><strong>آدرس:</strong> <span id="userAddress"></span></p>
             </div>
-         butttton onclick="downloadIDCard()">دانلود کارت شناسایی</button>
+            <button onclick="editProfile()">ویرایش پروفایل</button>
+            <button onclick="downloadIDCard()">دانلود کارت شناسایی</button>
             <button onclick="logout()">خروج</button>
         </div>
 
-        
+        <div id="editProfile" style="display: none;">
+            <h2>ویرایش پروفایل</h2>
+            <input type="text" id="editName" placeholder="نام">
+            <input type="text" id="editFamily" placeholder="نام خانوادگی">
+            <input type="text" id="editNationalCode" placeholder="کد ملی">
+            <input type="text" id="editBirthdate" placeholder="تاریخ تولد (مثال: ۱۳۸۰/۰۵/۲۳)">
+            <div class="gender-container">
+                <label><input type="radio" name="editGender" value="male"> مرد</label>
+                <label><input type="radio" name="editGender" value="female"> زن</label>
+            </div>
+            <input type="text" id="editEducation" placeholder="تحصیلات">
+            <textarea id="editAddress" placeholder="آدرس محل زندگی"></textarea>
+            <p class="error" id="editError"></p>
+            <p class="success" id="editSuccess"></p>
+            <button onclick="saveProfile()">ذخیره تغییرات</button>
+            <button onclick="showDashboard(currentUser)">بازگشت</button>
+        </div>
+    </div>
+
     <script>
         let db;
         const dbName = "UserDB";
@@ -259,7 +278,7 @@
 
             saveUser(user);
             document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
-            setTimeout(() => showLogin(), 2000);
+            setTimeout(() => showLogin(), 1000);
         }
 
         // Login function
@@ -281,7 +300,6 @@
             document.getElementById("login").style.display = "none";
             document.getElementById("editProfile").style.display = "none";
             document.getElementById("dashboard").style.display = "block";
-
             document.getElementById("userName").innerText = user.name;
             document.getElementById("userFamily").innerText = user.family;
             document.getElementById("userNationalCode").innerText = user.nationalCode;
@@ -296,7 +314,6 @@
         function editProfile() {
             document.getElementById("dashboard").style.display = "none";
             document.getElementById("editProfile").style.display = "block";
-
             document.getElementById("editName").value = currentUser.name;
             document.getElementById("editFamily").value = currentUser.family;
             document.getElementById("editNationalCode").value = currentUser.nationalCode;
