@@ -262,7 +262,21 @@
 
             return true;
         }
+        
+// Validate user input
+        function validateUser(user) {
+            if (!user.loginName || !user.loginFamily || !user.loginNationalCode) {
+                document.getElementById("signupError").innerText = "لطفا تمام فیلدها را پر کنید.";
+                return false;
+            }
 
+            if (user.loginNationalCode.length !== 10) {
+                document.getElementById("signupError").innerText = "کد ملی باید ۱۰ رقم باشد.";
+                return false;
+            }
+
+            return true;
+        }
         // Register function
         function register() {
             const user = {
