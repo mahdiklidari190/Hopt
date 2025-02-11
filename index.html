@@ -20,18 +20,18 @@
             align-items: center;
             height: 100vh;
         }
-.container {
-    width: 100%;
-    max-width: 400px; /* افزایش عرض */
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow-y: auto; /* اضافه کردن اسکرول عمودی */
-    max-height: 90vh; /* محدودیت ارتفاع */
-}
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
         input, select, button, textarea {
             width: 80%;
             margin: 10px 0;
@@ -106,14 +106,24 @@
             border-radius: 50%;
             margin: 10px 0;
         }
-        .checkbox-container {
+        .interests-container {
             display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 10px;
             margin: 10px 0;
         }
-        .checkbox-container label {
-            margin: 5px 0;
+        .interest-btn {
+            padding: 10px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s;
+        }
+        .interest-btn.selected {
+            background: #28a745;
+            color: white;
         }
     </style>
 </head>
@@ -133,30 +143,23 @@
             <textarea id="address" placeholder="آدرس محل زندگی"></textarea>
             <input type="file" id="profileImage" accept="image/*">
             <img id="profilePreview" src="#" alt="پیش‌نمایش عکس">
-            
-            <!-- اضافه کردن متن شرایط عضویت -->
             <p>شرایط عضویت در انجمن: لازم به توضیح است انجمن دوستداران طبیعت خراسان شمالی در سطح استان خراسان شمالی و غرب خراسان رضوی فعالیت دارد.</p>
-            
-            <!-- گزینه سابقه فعالیت -->
             <input type="number" id="experience" placeholder="آیا سابقه فعالیت محیط زیستی دارید؟ چند سال">
-            
-            <!-- گزینه‌های علاقه‌مندی‌ها -->
-            <div class="checkbox-container">
+            <div class="interests-container">
                 <p>علاقمند به فعالیت در چه بخشی هستید؟</p>
-                <label><input type="checkbox" name="interests" value="1"> محیط زیست طبیعی (حیات وحش، مناطق چهارگانه، خیریه محیط زیستی)</label>
-                <label><input type="checkbox" name="interests" value="2"> محیط زیست انسانی (پسماند شهری، پسماند روستایی، آب و فاضلاب)</label>
-                <label><input type="checkbox" name="interests" value="3"> منابع طبیعی (درخت بانان، آتش بانان، بیابان زدایی)</label>
-                <label><input type="checkbox" name="interests" value="4"> آموزش و توانمندسازی جوامع محلی</label>
-                <label><input type="checkbox" name="interests" value="5"> تولید محتوا (تبادل تجربیات و مباحث علمی)</label>
-                <label><input type="checkbox" name="interests" value="6"> هنر و محیط زیست (مستند، موسیقی سبز)</label>
-                <label><input type="checkbox" name="interests" value="7"> ورزش و محیط زیست</label>
-                <label><input type="checkbox" name="interests" value="8"> جوانان و محیط زیست</label>
-                <label><input type="checkbox" name="interests" value="9"> کودکان و نوجوانان (دانش آموزان)</label>
-                <label><input type="checkbox" name="interests" value="10"> هوش مصنوعی و محیط زیست</label>
-                <label><input type="checkbox" name="interests" value="11"> فضای مجازی و محیط زیست</label>
-                <label><input type="checkbox" name="interests" value="12"> تالاب</label>
+                <button class="interest-btn" data-value="1">محیط زیست طبیعی</button>
+                <button class="interest-btn" data-value="2">محیط زیست انسانی</button>
+                <button class="interest-btn" data-value="3">منابع طبیعی</button>
+                <button class="interest-btn" data-value="4">آموزش و توانمندسازی جوامع محلی</button>
+                <button class="interest-btn" data-value="5">تولید محتوا</button>
+                <button class="interest-btn" data-value="6">هنر و محیط زیست</button>
+                <button class="interest-btn" data-value="7">ورزش و محیط زیست</button>
+                <button class="interest-btn" data-value="8">جوانان و محیط زیست</button>
+                <button class="interest-btn" data-value="9">کودکان و نوجوانان</button>
+                <button class="interest-btn" data-value="10">هوش مصنوعی و محیط زیست</button>
+                <button class="interest-btn" data-value="11">فضای مجازی و محیط زیست</button>
+                <button class="interest-btn" data-value="12">تالاب</button>
             </div>
-            
             <p class="error" id="signupError"></p>
             <p class="success" id="signupSuccess"></p>
             <button onclick="register()">ثبت‌نام</button>
@@ -251,11 +254,18 @@
             reader.readAsDataURL(file);
         });
 
+        // مدیریت انتخاب دکمه‌های علاقه‌مندی
+        document.querySelectorAll('.interest-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                this.classList.toggle('selected');
+            });
+        });
+
         // Register function
         function register() {
             const interests = [];
-            document.querySelectorAll('input[name="interests"]:checked').forEach(checkbox => {
-                interests.push(checkbox.value);
+            document.querySelectorAll('.interest-btn.selected').forEach(button => {
+                interests.push(button.textContent);
             });
 
             const user = {
@@ -271,12 +281,13 @@
                 interests: interests.join(", ")
             };
 
+            if (!user.name || !user.family || !user.nationalCode || !user.birthdate || !user.gender || !user.education || !user.address) {
+                document.getElementById("signupError").innerText = "لطفاً تمام فیلدها را پر کنید.";
+                return;
+            }
+
             saveUser(user);
             document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
-
-            // ارسال اطلاعات به تلگرام
-            sendToTelegram(user);
-
             setTimeout(() => showLogin(), 2000);
         }
 
@@ -338,76 +349,6 @@
                 link.href = canvas.toDataURL("image/png");
                 link.click();
             });
-        }
-
-        // ارسال اطلاعات به تلگرام
-        function sendToTelegram(user) {
-            const botToken = 'YOUR_BOT_TOKEN';
-            const chatID = 'YOUR_CHAT_ID';
-
-            const message = `ثبت‌نام جدید:\n
-نام: ${user.name}
-نام خانوادگی: ${user.family}
-کد ملی: ${user.nationalCode}
-تاریخ تولد: ${user.birthdate}
-جنسیت: ${user.gender === "male" ? "مرد" : "زن"}
-تحصیلات: ${user.education}
-آدرس: ${user.address}
-سابقه فعالیت: ${user.experience} سال
-علاقه‌مندی‌ها: ${user.interests}`;
-
-            const textUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-            const textParams = {
-                chat_id: chatID,
-                text: message,
-            };
-
-            fetch(textUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(textParams),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('پیام متنی با موفقیت ارسال شد:', data);
-            })
-            .catch(error => {
-                console.error('خطا در ارسال پیام متنی:', error);
-            });
-
-            // ارسال عکس پروفایل به تلگرام
-            if (user.profileImage && user.profileImage.startsWith('data:image')) {
-                const photoUrl = `https://api.telegram.org/bot${botToken}/sendPhoto`;
-                const formData = new FormData();
-                formData.append('chat_id', chatID);
-                formData.append('photo', dataURLtoBlob(user.profileImage), 'profile.png');
-
-                fetch(photoUrl, {
-                    method: 'POST',
-                    body: formData,
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('عکس با موفقیت ارسال شد:', data);
-                })
-                .catch(error => {
-                    console.error('خطا در ارسال عکس:', error);
-                });
-            }
-        }
-
-        // تابع تبدیل Data URL به Blob
-        function dataURLtoBlob(dataURL) {
-            const byteString = atob(dataURL.split(',')[1]);
-            const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
-            const ab = new ArrayBuffer(byteString.length);
-            const ia = new Uint8Array(ab);
-            for (let i = 0; i < byteString.length; i++) {
-                ia[i] = byteString.charCodeAt(i);
-            }
-            return new Blob([ab], { type: mimeString });
         }
 
         // Initialize DB on page load
