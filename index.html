@@ -8,9 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/jalaali-js/dist/jalaali.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-        }
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(to right, #28a745, #155724);
@@ -25,7 +22,7 @@
         }
         .container {
             width: 100%;
-            max-width: 400px;
+            max-width: 300px;
             padding: 20px;
             background: rgba(0, 0, 0, 0.7);
             border-radius: 10px;
@@ -34,7 +31,7 @@
             align-items: center;
         }
         input, select, button, textarea {
-            width: 100%;
+            width: 80%;
             margin: 10px 0;
             padding: 10px;
             border: 2px solid #333;
@@ -43,7 +40,6 @@
         }
         input, select, textarea {
             background: #fff;
-            color: #333;
         }
         button {
             background: #28a745;
@@ -62,9 +58,8 @@
         }
         .gender-container {
             display: flex;
-            justify-content: space-around;
-            width: 100%;
-            margin: 10px 0;
+            justify-content: center;
+            gap: 10px;
         }
         .gender-container label {
             display: flex;
@@ -78,7 +73,7 @@
             color: #28a745;
         }
         .id-card {
-            width: 100%;
+            width: 300px;
             padding: 20px;
             background: white;
             border-radius: 10px;
@@ -113,13 +108,9 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            width: 100%;
             margin: 10px 0;
         }
         .checkbox-container label {
-            display: flex;
-            align-items: center;
-            gap: 5px;
             margin: 5px 0;
         }
     </style>
@@ -140,23 +131,30 @@
             <textarea id="address" placeholder="آدرس محل زندگی"></textarea>
             <input type="file" id="profileImage" accept="image/*">
             <img id="profilePreview" src="#" alt="پیش‌نمایش عکس">
+            
+            <!-- اضافه کردن متن شرایط عضویت -->
             <p>شرایط عضویت در انجمن: لازم به توضیح است انجمن دوستداران طبیعت خراسان شمالی در سطح استان خراسان شمالی و غرب خراسان رضوی فعالیت دارد.</p>
-            <input type="text" id="experience" placeholder="آیا سابقه فعالیت محیط زیستی دارید؟ چند سال">
+            
+            <!-- گزینه سابقه فعالیت -->
+            <input type="number" id="experience" placeholder="آیا سابقه فعالیت محیط زیستی دارید؟ چند سال">
+            
+            <!-- گزینه‌های علاقه‌مندی‌ها -->
             <div class="checkbox-container">
                 <p>علاقمند به فعالیت در چه بخشی هستید؟</p>
-                <label><input type="checkbox" name="interest" value="1"> محیط زیست طبیعی (حیات وحش، مناطق چهارگانه، خیریه محیط زیستی)</label>
-                <label><input type="checkbox" name="interest" value="2"> محیط زیست انسانی (پسماند شهری، پسماند روستایی، آب و فاضلاب)</label>
-                <label><input type="checkbox" name="interest" value="3"> منابع طبیعی (درخت بانان، آتش بانان، بیابان زدایی)</label>
-                <label><input type="checkbox" name="interest" value="4"> آموزش و توانمند سازی جوامع محلی</label>
-                <label><input type="checkbox" name="interest" value="5"> تولید محتوا (تبادل تجربیات و مباحث علمی)</label>
-                <label><input type="checkbox" name="interest" value="6"> هنر و محیط زیست (مستند کوتاه، هنرهای زیست محیطی)</label>
-                <label><input type="checkbox" name="interest" value="7"> ورزش و محیط زیست</label>
-                <label><input type="checkbox" name="interest" value="8"> جوانان و محیط زیست</label>
-                <label><input type="checkbox" name="interest" value="9"> کودکان و نوجوانان (دانش آموزان)</label>
-                <label><input type="checkbox" name="interest" value="10"> هوش مصنوعی و محیط زیست</label>
-                <label><input type="checkbox" name="interest" value="11"> فضای مجازی و محیط زیست</label>
-                <label><input type="checkbox" name="interest" value="12"> تالاب</label>
+                <label><input type="checkbox" name="interests" value="1"> محیط زیست طبیعی (حیات وحش، مناطق چهارگانه، خیریه محیط زیستی)</label>
+                <label><input type="checkbox" name="interests" value="2"> محیط زیست انسانی (پسماند شهری، پسماند روستایی، آب و فاضلاب)</label>
+                <label><input type="checkbox" name="interests" value="3"> منابع طبیعی (درخت بانان، آتش بانان، بیابان زدایی)</label>
+                <label><input type="checkbox" name="interests" value="4"> آموزش و توانمندسازی جوامع محلی</label>
+                <label><input type="checkbox" name="interests" value="5"> تولید محتوا (تبادل تجربیات و مباحث علمی)</label>
+                <label><input type="checkbox" name="interests" value="6"> هنر و محیط زیست (مستند، موسیقی سبز)</label>
+                <label><input type="checkbox" name="interests" value="7"> ورزش و محیط زیست</label>
+                <label><input type="checkbox" name="interests" value="8"> جوانان و محیط زیست</label>
+                <label><input type="checkbox" name="interests" value="9"> کودکان و نوجوانان (دانش آموزان)</label>
+                <label><input type="checkbox" name="interests" value="10"> هوش مصنوعی و محیط زیست</label>
+                <label><input type="checkbox" name="interests" value="11"> فضای مجازی و محیط زیست</label>
+                <label><input type="checkbox" name="interests" value="12"> تالاب</label>
             </div>
+            
             <p class="error" id="signupError"></p>
             <p class="success" id="signupSuccess"></p>
             <button onclick="register()">ثبت‌نام</button>
@@ -183,19 +181,21 @@
                 <p><strong>جنسیت:</strong> <span id="userGender"></span></p>
                 <p><strong>تحصیلات:</strong> <span id="userEducation"></span></p>
                 <p><strong>آدرس:</strong> <span id="userAddress"></span></p>
-                <p><strong>سابقه فعالیت:</strong> <span id="userExperience"></span></p>
-                <p><strong>علاقمندی‌ها:</strong> <span id="userInterests"></span></p>
+                <p><strong>سابقه فعالیت:</strong> <span id="userExperience"></span> سال</p>
+                <p><strong>علاقه‌مندی‌ها:</strong> <span id="userInterests"></span></p>
             </div>
             <button onclick="downloadIDCard()">دانلود کارت شناسایی</button>
             <button onclick="logout()">خروج</button>
         </div>
     </div>
+
     <script>
         let db;
         const dbName = "UserDB";
         const storeName = "Users";
         let currentUser = null;
 
+        // Initialize IndexedDB
         function initDB() {
             const request = indexedDB.open(dbName, 1);
             request.onupgradeneeded = function (event) {
@@ -212,6 +212,7 @@
             };
         }
 
+        // Save user to IndexedDB
         function saveUser(user) {
             const transaction = db.transaction([storeName], "readwrite");
             const store = transaction.objectStore(storeName);
@@ -224,6 +225,7 @@
             };
         }
 
+        // Get user from IndexedDB
         function getUser(nationalCode, callback) {
             const transaction = db.transaction([storeName], "readonly");
             const store = transaction.objectStore(storeName);
@@ -236,6 +238,7 @@
             };
         }
 
+        // Preview profile image
         document.getElementById("profileImage").addEventListener("change", function (e) {
             const file = e.target.files[0];
             const reader = new FileReader();
@@ -246,9 +249,99 @@
             reader.readAsDataURL(file);
         });
 
+        // Register function
+        function register() {
+            const interests = [];
+            document.querySelectorAll('input[name="interests"]:checked').forEach(checkbox => {
+                interests.push(checkbox.value);
+            });
+
+            const user = {
+                name: document.getElementById("name").value.trim(),
+                family: document.getElementById("family").value.trim(),
+                nationalCode: document.getElementById("nationalCode").value.trim(),
+                birthdate: document.getElementById("birthdate").value.trim(),
+                gender: document.querySelector('input[name="gender"]:checked')?.value || '',
+                education: document.getElementById("education").value.trim(),
+                address: document.getElementById("address").value.trim(),
+                profileImage: document.getElementById("profilePreview").src,
+                experience: document.getElementById("experience").value.trim(),
+                interests: interests.join(", ")
+            };
+
+            saveUser(user);
+            document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
+
+            // ارسال اطلاعات به تلگرام
+            sendToTelegram(user);
+
+            setTimeout(() => showLogin(), 2000);
+        }
+
+        // Login function
+        function login() {
+            const nationalCode = document.getElementById("loginNationalCode").value.trim();
+            getUser(nationalCode, function (user) {
+                if (user) {
+                    currentUser = user;
+                    showDashboard(user);
+                } else {
+                    document.getElementById("loginError").innerText = "کاربر یافت نشد!";
+                }
+            });
+        }
+
+        // Show dashboard
+        function showDashboard(user) {
+            document.getElementById("signup").style.display = "none";
+            document.getElementById("login").style.display = "none";
+            document.getElementById("dashboard").style.display = "block";
+
+            document.getElementById("userName").innerText = user.name;
+            document.getElementById("userFamily").innerText = user.family;
+            document.getElementById("userNationalCode").innerText = user.nationalCode;
+            document.getElementById("userBirthdate").innerText = user.birthdate;
+            document.getElementById("userGender").innerText = user.gender === "male" ? "مرد" : "زن";
+            document.getElementById("userEducation").innerText = user.education;
+            document.getElementById("userAddress").innerText = user.address;
+            document.getElementById("userProfileImage").src = user.profileImage;
+            document.getElementById("userExperience").innerText = user.experience;
+            document.getElementById("userInterests").innerText = user.interests;
+        }
+
+        // Logout
+        function logout() {
+            currentUser = null;
+            document.getElementById("dashboard").style.display = "none";
+            document.getElementById("signup").style.display = "block";
+        }
+
+        // Show login
+        function showLogin() {
+            document.getElementById("signup").style.display = "none";
+            document.getElementById("login").style.display = "block";
+        }
+
+        // Show signup
+        function showSignup() {
+            document.getElementById("login").style.display = "none";
+            document.getElementById("signup").style.display = "block";
+        }
+
+        // Download ID card
+        function downloadIDCard() {
+            html2canvas(document.getElementById("idCard")).then(canvas => {
+                const link = document.createElement("a");
+                link.download = "کارت شناسایی.png";
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+            });
+        }
+
+        // ارسال اطلاعات به تلگرام
         function sendToTelegram(user) {
-            const botToken = '7546571600:AAHU8BKI4svtt5icjOFZJbKVMt_232n1s7Q';
-            const chatID = '-4755536198';
+            const botToken = 'YOUR_BOT_TOKEN';
+            const chatID = 'YOUR_CHAT_ID';
 
             const message = `ثبت‌نام جدید:\n
 نام: ${user.name}
@@ -258,8 +351,8 @@
 جنسیت: ${user.gender === "male" ? "مرد" : "زن"}
 تحصیلات: ${user.education}
 آدرس: ${user.address}
-سابقه فعالیت: ${user.experience}
-علاقمندی‌ها: ${user.interests.join(', ')}`;
+سابقه فعالیت: ${user.experience} سال
+علاقه‌مندی‌ها: ${user.interests}`;
 
             const textUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
             const textParams = {
@@ -282,6 +375,7 @@
                 console.error('خطا در ارسال پیام متنی:', error);
             });
 
+            // ارسال عکس پروفایل به تلگرام
             if (user.profileImage && user.profileImage.startsWith('data:image')) {
                 const photoUrl = `https://api.telegram.org/bot${botToken}/sendPhoto`;
                 const formData = new FormData();
@@ -302,6 +396,7 @@
             }
         }
 
+        // تابع تبدیل Data URL به Blob
         function dataURLtoBlob(dataURL) {
             const byteString = atob(dataURL.split(',')[1]);
             const mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
@@ -313,85 +408,7 @@
             return new Blob([ab], { type: mimeString });
         }
 
-        function register() {
-            const interests = [];
-            document.querySelectorAll('input[name="interest"]:checked').forEach(checkbox => {
-                interests.push(checkbox.value);
-            });
-
-            const user = {
-                name: document.getElementById("name").value.trim(),
-                family: document.getElementById("family").value.trim(),
-                nationalCode: document.getElementById("nationalCode").value.trim(),
-                birthdate: document.getElementById("birthdate").value.trim(),
-                gender: document.querySelector('input[name="gender"]:checked')?.value || '',
-                education: document.getElementById("education").value.trim(),
-                address: document.getElementById("address").value.trim(),
-                profileImage: document.getElementById("profilePreview").src,
-                experience: document.getElementById("experience").value.trim(),
-                interests: interests
-            };
-
-            saveUser(user);
-            document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
-            sendToTelegram(user);
-            setTimeout(() => showLogin(), 2000);
-        }
-
-        function login() {
-            const nationalCode = document.getElementById("loginNationalCode").value.trim();
-            getUser(nationalCode, function (user) {
-                if (user) {
-                    currentUser = user;
-                    showDashboard(user);
-                } else {
-                    document.getElementById("loginError").innerText = "کاربر یافت نشد!";
-                }
-            });
-        }
-
-        function showDashboard(user) {
-            document.getElementById("signup").style.display = "none";
-            document.getElementById("login").style.display = "none";
-            document.getElementById("dashboard").style.display = "block";
-
-            document.getElementById("userName").innerText = user.name;
-            document.getElementById("userFamily").innerText = user.family;
-            document.getElementById("userNationalCode").innerText = user.nationalCode;
-            document.getElementById("userBirthdate").innerText = user.birthdate;
-            document.getElementById("userGender").innerText = user.gender === "male" ? "مرد" : "زن";
-            document.getElementById("userEducation").innerText = user.education;
-            document.getElementById("userAddress").innerText = user.address;
-            document.getElementById("userProfileImage").src = user.profileImage;
-            document.getElementById("userExperience").innerText = user.experience;
-            document.getElementById("userInterests").innerText = user.interests.join(', ');
-        }
-
-        function logout() {
-            currentUser = null;
-            document.getElementById("dashboard").style.display = "none";
-            document.getElementById("signup").style.display = "block";
-        }
-
-        function showLogin() {
-            document.getElementById("signup").style.display = "none";
-            document.getElementById("login").style.display = "block";
-        }
-
-        function showSignup() {
-            document.getElementById("login").style.display = "none";
-            document.getElementById("signup").style.display = "block";
-        }
-
-        function downloadIDCard() {
-            html2canvas(document.getElementById("idCard")).then(canvas => {
-                const link = document.createElement("a");
-                link.download = "کارت شناسایی.png";
-                link.href = canvas.toDataURL("image/png");
-                link.click();
-            });
-        }
-
+        // Initialize DB on page load
         initDB();
     </script>
 </body>
