@@ -20,18 +20,18 @@
             align-items: center;
             height: 100vh;
         }
-.container {
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* این خط را اضافه کنید */
-    overflow-y: auto;
-    max-height: 90vh;
-}
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
         input, select, button, textarea {
             width: 80%;
             margin: 10px 0;
@@ -70,6 +70,11 @@
         }
         .error {
             color: red;
+            font-size: 12px;
+            margin-top: -5px;
+            margin-bottom: 5px;
+            display: block;
+            min-height: 15px;
         }
         .success {
             color: #28a745;
@@ -107,12 +112,12 @@
             margin: 10px 0;
         }
         .interests-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 10px 0;
-    justify-content: center; /* اضافه کردن این خط */
-            }
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+            justify-content: center;
+        }
         .interest-btn {
             padding: 10px;
             border: 2px solid #333;
@@ -126,26 +131,72 @@
             background: #28a745;
             color: white;
         }
+        .input-container {
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="signup">
             <h2>ثبت‌نام</h2>
-            <input type="text" id="name" placeholder="نام">
-            <input type="text" id="family" placeholder="نام خانوادگی">
-            <input type="text" id="nationalCode" placeholder="کد ملی">
-            <input type="text" id="birthdate" placeholder="تاریخ تولد (مثال: ۱۳۸۰/۰۵/۲۳)">
+            
+            <div class="input-container">
+                <input type="text" id="name" placeholder="نام" oninput="validateName()">
+                <span class="error" id="nameError"></span>
+            </div>
+            
+            <div class="input-container">
+                <input type="text" id="family" placeholder="نام خانوادگی" oninput="validateFamily()">
+                <span class="error" id="familyError"></span>
+            </div>
+            
+            <div class="input-container">
+                <input type="text" id="nationalCode" placeholder="کد ملی" maxlength="10" oninput="validateNationalCode()">
+                <span class="error" id="nationalCodeError"></span>
+            </div>
+            
+            <div class="input-container">
+                <input type="text" id="birthdate" placeholder="تاریخ تولد (مثال: ۱۳۸۰/۰۵/۲۳)" oninput="validateBirthdate()">
+                <span class="error" id="birthdateError"></span>
+            </div>
+            
+            <div class="input-container">
+                <input type="text" id="phone" placeholder="شماره تماس (مثال: 09123456789)" maxlength="11" oninput="validatePhone()">
+                <span class="error" id="phoneError"></span>
+            </div>
+            
             <div class="gender-container">
                 <label><input type="radio" name="gender" value="male"> مرد</label>
                 <label><input type="radio" name="gender" value="female"> زن</label>
             </div>
-            <input type="text" id="education" placeholder="تحصیلات">
-            <textarea id="address" placeholder="آدرس محل زندگی"></textarea>
-            <input type="file" id="profileImage" accept="image/*">
-            <img id="profilePreview" src="#" alt="پیش‌نمایش عکس">
+            <span class="error" id="genderError"></span>
+            
+            <div class="input-container">
+                <input type="text" id="education" placeholder="تحصیلات" oninput="validateEducation()">
+                <span class="error" id="educationError"></span>
+            </div>
+            
+            <div class="input-container">
+                <textarea id="address" placeholder="آدرس محل زندگی" oninput="validateAddress()"></textarea>
+                <span class="error" id="addressError"></span>
+            </div>
+            
+            <div class="input-container">
+                <input type="file" id="profileImage" accept="image/*">
+                <img id="profilePreview" src="#" alt="پیش‌نمایش عکس">
+            </div>
+            
             <p>شرایط عضویت در انجمن: لازم به توضیح است انجمن دوستداران طبیعت خراسان شمالی در سطح استان خراسان شمالی و غرب خراسان رضوی فعالیت دارد.</p>
-            <input type="number" id="experience" placeholder="آیا سابقه فعالیت محیط زیستی دارید؟ چند سال">
+            
+            <div class="input-container">
+                <input type="number" id="experience" placeholder="آیا سابقه فعالیت محیط زیستی دارید؟ چند سال" min="0" oninput="validateExperience()">
+                <span class="error" id="experienceError"></span>
+            </div>
+            
             <div class="interests-container">
                 <p>علاقمند به فعالیت در چه بخشی هستید؟</p>
                 <button class="interest-btn" data-value="1">محیط زیست طبیعی</button>
@@ -161,11 +212,14 @@
                 <button class="interest-btn" data-value="11">فضای مجازی و محیط زیست</button>
                 <button class="interest-btn" data-value="12">تالاب</button>
             </div>
+            <span class="error" id="interestsError"></span>
+            
             <p class="error" id="signupError"></p>
             <p class="success" id="signupSuccess"></p>
             <button onclick="register()">ثبت‌نام</button>
             <p>حساب کاربری دارید؟ <a href="#" onclick="showLogin()">ورود</a></p>
         </div>
+        
         <div id="login" style="display: none;">
             <h2>ورود</h2>
             <input type="text" id="loginName" placeholder="نام">
@@ -175,6 +229,7 @@
             <button onclick="login()">ورود</button>
             <p>حساب ندارید؟ <a href="#" onclick="showSignup()">ثبت‌نام</a></p>
         </div>
+        
         <div id="dashboard" style="display: none;">
             <h2>پنل کاربری</h2>
             <div id="idCard" class="id-card">
@@ -184,6 +239,7 @@
                 <p><strong>نام خانوادگی:</strong> <span id="userFamily"></span></p>
                 <p><strong>کد ملی:</strong> <span id="userNationalCode"></span></p>
                 <p><strong>تاریخ تولد:</strong> <span id="userBirthdate"></span></p>
+                <p><strong>شماره تماس:</strong> <span id="userPhone"></span></p>
                 <p><strong>جنسیت:</strong> <span id="userGender"></span></p>
                 <p><strong>تحصیلات:</strong> <span id="userEducation"></span></p>
                 <p><strong>آدرس:</strong> <span id="userAddress"></span></p>
@@ -203,11 +259,20 @@
 
         // Initialize IndexedDB
         function initDB() {
-            const request = indexedDB.open(dbName, 1);
+            const request = indexedDB.open(dbName, 2); // افزایش نسخه برای افزودن فیلد جدید
             request.onupgradeneeded = function (event) {
                 db = event.target.result;
                 if (!db.objectStoreNames.contains(storeName)) {
-                    db.createObjectStore(storeName, { keyPath: "nationalCode" });
+                    const store = db.createObjectStore(storeName, { keyPath: "nationalCode" });
+                    // ایجاد ایندکس برای جستجوی بهتر
+                    store.createIndex("phone", "phone", { unique: false });
+                } else {
+                    // برای نسخه های قبلی، فیلد جدید اضافه می‌شود
+                    const transaction = event.target.transaction;
+                    const store = transaction.objectStore(storeName);
+                    if (!store.indexNames.contains("phone")) {
+                        store.createIndex("phone", "phone", { unique: false });
+                    }
                 }
             };
             request.onsuccess = function (event) {
@@ -244,26 +309,215 @@
             };
         }
 
+        // اعتبارسنجی نام
+        function validateName() {
+            const name = document.getElementById("name").value.trim();
+            const errorElement = document.getElementById("nameError");
+            
+            if (name.length === 0) {
+                errorElement.innerText = "نام الزامی است";
+                return false;
+            } else if (!/^[\u0600-\u06FF\s]+$/.test(name)) {
+                errorElement.innerText = "نام باید فقط شامل حروف فارسی باشد";
+                return false;
+            } else {
+                errorElement.innerText = "";
+                return true;
+            }
+        }
+
+        // اعتبارسنجی نام خانوادگی
+        function validateFamily() {
+            const family = document.getElementById("family").value.trim();
+            const errorElement = document.getElementById("familyError");
+            
+            if (family.length === 0) {
+                errorElement.innerText = "نام خانوادگی الزامی است";
+                return false;
+            } else if (!/^[\u0600-\u06FF\s]+$/.test(family)) {
+                errorElement.innerText = "نام خانوادگی باید فقط شامل حروف فارسی باشد";
+                return false;
+            } else {
+                errorElement.innerText = "";
+                return true;
+            }
+        }
+
+        // اعتبارسنجی کد ملی
+        function validateNationalCode() {
+            const nationalCode = document.getElementById("nationalCode").value.trim();
+            const errorElement = document.getElementById("nationalCodeError");
+            
+            if (nationalCode.length === 0) {
+                errorElement.innerText = "کد ملی الزامی است";
+                return false;
+            } else if (!/^\d{10}$/.test(nationalCode)) {
+                errorElement.innerText = "کد ملی باید دقیقاً 10 رقم باشد";
+                return false;
+            } else {
+                errorElement.innerText = "";
+                return true;
+            }
+        }
+
+        // اعتبارسنجی تاریخ تولد
+        function validateBirthdate() {
+            const birthdate = document.getElementById("birthdate").value.trim();
+            const errorElement = document.getElementById("birthdateError");
+            
+            if (birthdate.length === 0) {
+                errorElement.innerText = "تاریخ تولد الزامی است";
+                return false;
+            } else if (!/^\d{4}\/\d{2}\/\d{2}$/.test(birthdate)) {
+                errorElement.innerText = "فرمت تاریخ باید به صورت YYYY/MM/DD باشد";
+                return false;
+            } else {
+                errorElement.innerText = "";
+                return true;
+            }
+        }
+
+        // اعتبارسنجی شماره تماس
+        function validatePhone() {
+            const phone = document.getElementById("phone").value.trim();
+            const errorElement = document.getElementById("phoneError");
+            
+            if (phone.length === 0) {
+                errorElement.innerText = "شماره تماس الزامی است";
+                return false;
+            } else if (!/^09\d{9}$/.test(phone)) {
+                errorElement.innerText = "شماره تماس باید با 09 شروع شود و 11 رقم باشد";
+                return false;
+            } else {
+                errorElement.innerText = "";
+                return true;
+            }
+        }
+
+        // اعتبارسنجی تحصیلات
+        function validateEducation() {
+            const education = document.getElementById("education").value.trim();
+            const errorElement = document.getElementById("educationError");
+            
+            if (education.length === 0) {
+                errorElement.innerText = "تحصیلات الزامی است";
+                return false;
+            } else {
+                errorElement.innerText = "";
+                return true;
+            }
+        }
+
+        // اعتبارسنجی آدرس
+        function validateAddress() {
+            const address = document.getElementById("address").value.trim();
+            const errorElement = document.getElementById("addressError");
+            
+            if (address.length === 0) {
+                errorElement.innerText = "آدرس الزامی است";
+                return false;
+            } else {
+                errorElement.innerText = "";
+                return true;
+            }
+        }
+
+        // اعتبارسنجی سابقه کار
+        function validateExperience() {
+            const experience = document.getElementById("experience").value.trim();
+            const errorElement = document.getElementById("experienceError");
+            
+            if (experience.length === 0) {
+                errorElement.innerText = "لطفاً سابقه کار را وارد کنید (در صورت نداشتن سابقه، عدد 0 را وارد کنید)";
+                return false;
+            } else if (isNaN(experience) || parseInt(experience) < 0) {
+                errorElement.innerText = "سابقه کار باید یک عدد معتبر باشد";
+                return false;
+            } else {
+                errorElement.innerText = "";
+                return true;
+            }
+        }
+
+        // اعتبارسنجی جنسیت
+        function validateGender() {
+            const gender = document.querySelector('input[name="gender"]:checked');
+            const errorElement = document.getElementById("genderError");
+            
+            if (!gender) {
+                errorElement.innerText = "انتخاب جنسیت الزامی است";
+                return false;
+            } else {
+                errorElement.innerText = "";
+                return true;
+            }
+        }
+
+        // اعتبارسنجی علاقه‌مندی‌ها
+        function validateInterests() {
+            const interests = document.querySelectorAll('.interest-btn.selected');
+            const errorElement = document.getElementById("interestsError");
+            
+            if (interests.length === 0) {
+                errorElement.innerText = "حداقل یک علاقه‌مندی باید انتخاب شود";
+                return false;
+            } else {
+                errorElement.innerText = "";
+                return true;
+            }
+        }
+
+        // اعتبارسنجی کلی تمام فیلدها
+        function validateAllFields() {
+            const validations = [
+                validateName(),
+                validateFamily(),
+                validateNationalCode(),
+                validateBirthdate(),
+                validatePhone(),
+                validateGender(),
+                validateEducation(),
+                validateAddress(),
+                validateExperience(),
+                validateInterests()
+            ];
+            
+            return validations.every(validation => validation === true);
+        }
+
         // Preview profile image
         document.getElementById("profileImage").addEventListener("change", function (e) {
             const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                document.getElementById("profilePreview").src = e.target.result;
-                document.getElementById("profilePreview").style.display = "block";
-            };
-            reader.readAsDataURL(file);
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById("profilePreview").src = e.target.result;
+                    document.getElementById("profilePreview").style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
         });
 
         // مدیریت انتخاب دکمه‌های علاقه‌مندی
         document.querySelectorAll('.interest-btn').forEach(button => {
             button.addEventListener('click', function () {
                 this.classList.toggle('selected');
+                validateInterests();
             });
         });
 
         // Register function
         function register() {
+            // پاک کردن پیام‌های قبلی
+            document.getElementById("signupError").innerText = "";
+            document.getElementById("signupSuccess").innerText = "";
+            
+            // اعتبارسنجی تمام فیلدها
+            if (!validateAllFields()) {
+                document.getElementById("signupError").innerText = "لطفاً خطاهای موجود در فرم را برطرف کنید.";
+                return;
+            }
+
             const interests = [];
             document.querySelectorAll('.interest-btn.selected').forEach(button => {
                 interests.push(button.textContent);
@@ -274,18 +528,14 @@
                 family: document.getElementById("family").value.trim(),
                 nationalCode: document.getElementById("nationalCode").value.trim(),
                 birthdate: document.getElementById("birthdate").value.trim(),
-                gender: document.querySelector('input[name="gender"]:checked')?.value || '',
+                phone: document.getElementById("phone").value.trim(),
+                gender: document.querySelector('input[name="gender"]:checked').value,
                 education: document.getElementById("education").value.trim(),
                 address: document.getElementById("address").value.trim(),
-                profileImage: document.getElementById("profilePreview").src,
+                profileImage: document.getElementById("profilePreview").src || "",
                 experience: document.getElementById("experience").value.trim(),
                 interests: interests.join(", ")
             };
-
-            if (!user.name || !user.family || !user.nationalCode || !user.birthdate || !user.gender || !user.education || !user.address) {
-                document.getElementById("signupError").innerText = "لطفاً تمام فیلدها را پر کنید.";
-                return;
-            }
 
             saveUser(user);
             document.getElementById("signupSuccess").innerText = "ثبت‌نام با موفقیت انجام شد!";
@@ -295,12 +545,18 @@
         // Login function
         function login() {
             const nationalCode = document.getElementById("loginNationalCode").value.trim();
+            
+            if (!nationalCode) {
+                document.getElementById("loginError").innerText = "لطفاً کد ملی را وارد کنید.";
+                return;
+            }
+            
             getUser(nationalCode, function (user) {
                 if (user) {
                     currentUser = user;
                     showDashboard(user);
                 } else {
-                    document.getElementById("loginError").innerText = "کاربر یافت نشد!";
+                    document.getElementById("loginError").innerText = "کاربری با این کد ملی یافت نشد!";
                 }
             });
         }
@@ -315,10 +571,13 @@
             document.getElementById("userFamily").innerText = user.family;
             document.getElementById("userNationalCode").innerText = user.nationalCode;
             document.getElementById("userBirthdate").innerText = user.birthdate;
+            document.getElementById("userPhone").innerText = user.phone;
             document.getElementById("userGender").innerText = user.gender === "male" ? "مرد" : "زن";
             document.getElementById("userEducation").innerText = user.education;
             document.getElementById("userAddress").innerText = user.address;
-            document.getElementById("userProfileImage").src = user.profileImage;
+            if (user.profileImage) {
+                document.getElementById("userProfileImage").src = user.profileImage;
+            }
             document.getElementById("userExperience").innerText = user.experience;
             document.getElementById("userInterests").innerText = user.interests;
         }
@@ -328,25 +587,33 @@
             currentUser = null;
             document.getElementById("dashboard").style.display = "none";
             document.getElementById("signup").style.display = "block";
+            // ریست کردن فرم
+            document.getElementById("signup").reset();
+            document.querySelectorAll('.error').forEach(el => el.innerText = '');
+            document.getElementById("profilePreview").style.display = "none";
+            document.querySelectorAll('.interest-btn').forEach(btn => btn.classList.remove('selected'));
         }
 
         // Show login
         function showLogin() {
             document.getElementById("signup").style.display = "none";
             document.getElementById("login").style.display = "block";
+            document.getElementById("loginError").innerText = "";
         }
 
         // Show signup
         function showSignup() {
             document.getElementById("login").style.display = "none";
             document.getElementById("signup").style.display = "block";
+            document.getElementById("signupError").innerText = "";
+            document.getElementById("signupSuccess").innerText = "";
         }
 
         // Download ID card
         function downloadIDCard() {
             html2canvas(document.getElementById("idCard")).then(canvas => {
                 const link = document.createElement("a");
-                link.download = "کارت شناسایی.png";
+                link.download = `کارت_شناسایی_${currentUser.nationalCode}.png`;
                 link.href = canvas.toDataURL("image/png");
                 link.click();
             });
